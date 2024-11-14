@@ -6,8 +6,8 @@ export class MdlMainVocabularyTopic extends BaseModal {
     name: string;
     subTopics: MdlSubVocabularyTopic[];  // Danh sách các chủ đề con
 
-    constructor(id: number, name: string, subTopics: MdlSubVocabularyTopic[] = []) {
-        super(id);
+    constructor(id: number, name: string, subTopics: MdlSubVocabularyTopic[] = [], createdAt: Date, updatedAt: Date, updateBy: string) {
+        super(id, createdAt, updatedAt, updateBy);
         this.name = name;
         this.subTopics = subTopics;
     }

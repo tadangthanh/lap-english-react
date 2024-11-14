@@ -1,6 +1,5 @@
 import { BaseModal } from "./BaseModal";
 
-// Từ vựng
 export class MdlWord extends BaseModal {
     word: string;
     meaning: string;
@@ -11,7 +10,7 @@ export class MdlWord extends BaseModal {
     example: string;
     idSubTopic: number;
     topicName: string;
-    imageUrl: string;  // Thêm thuộc tính imageUrl
+    imageUrl: string;
 
     constructor(
         id: number,
@@ -24,9 +23,12 @@ export class MdlWord extends BaseModal {
         example: string,
         idSubTopic: number,
         topicName: string,
-        imageUrl: string  // Thêm imageUrl vào constructor
+        imageUrl: string,
+        createdAt: Date,
+        updatedAt: Date,
+        updateBy: string
     ) {
-        super(id);
+        super(id, createdAt, updatedAt, updateBy);
         this.word = word;
         this.meaning = meaning;
         this.pronounceUK = pronounceUK;
@@ -36,6 +38,6 @@ export class MdlWord extends BaseModal {
         this.example = example;
         this.idSubTopic = idSubTopic;
         this.topicName = topicName;
-        this.imageUrl = imageUrl;  // Khởi tạo giá trị imageUrl
+        this.imageUrl = imageUrl;
     }
 }

@@ -47,7 +47,18 @@ const Sidebar: React.FC = () => {
                     })}
                 >
                     <i className="fa-solid fa-window-restore me-2"></i>
-                    Chủ đề
+                    Chủ đề chính
+                </NavLink>
+                <NavLink
+                    to="/sub-topic"
+                    className="nav-link text-secondary mb-3 d-flex align-items-center px-3 py-2"
+                    style={({ isActive }) => ({
+                        backgroundColor: isActive ? '#e0e0e0' : 'transparent',
+                        borderRadius: '5px',
+                    })}
+                >
+                    <i className="fa-solid fa-window-restore me-2"></i>
+                    Chủ đề con
                 </NavLink>
             </nav>
         </div>

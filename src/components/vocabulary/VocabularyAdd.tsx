@@ -22,7 +22,11 @@ const Vocabulary: React.FC = () => {
             example: 'Hello, how are you?',
             idSubTopic: 1,
             topicName: 'Greeting',
-            imageUrl: ''
+            imageUrl: '',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            updateBy: ''
+
         },
         {
             id: 2,
@@ -35,7 +39,10 @@ const Vocabulary: React.FC = () => {
             example: 'Goodbye, see you later!',
             idSubTopic: 1,
             topicName: 'Greeting',
-            imageUrl: ''
+            imageUrl: '',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            updateBy: ''
         }
     ]);
 
@@ -50,7 +57,11 @@ const Vocabulary: React.FC = () => {
         example: '',
         idSubTopic: 0, // Mặc định chọn chủ đề đầu tiên
         topicName: "",
-        imageUrl: ''
+        imageUrl: '',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        updateBy: ''
+
     });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
