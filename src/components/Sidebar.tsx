@@ -58,7 +58,7 @@ const Sidebar: React.FC = () => {
                     })}
                 >
                     <i className="fa-solid fa-window-restore me-2"></i>
-                    Chủ đề con
+                    Chủ đề phụ
                 </NavLink>
             </nav>
         </div>

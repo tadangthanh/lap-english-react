@@ -1,0 +1,67 @@
+/* Tổng quan của thẻ */
+.topic-card {
+    display: inline-block;
+    width: 200px;
+    height: 300px;
+    perspective: 1000px;
+    /* Hiệu ứng 3D */
+    margin: 20px;
+}
+
+.topic-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+    /* Thời gian chuyển đổi */
+}
+
+.topic-card:hover .topic-card-inner {
+    transform: rotateY(180deg);
+    /* Hiệu ứng xoay khi hover */
+}
+
+/* Mặt trước */
+.topic-card-front,
+.topic-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    /* Ẩn mặt sau khi không xoay */
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Mặt trước: hiển thị ảnh */
+.topic-card-front {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    background-size: cover;
+    background-position: center;
+    background-color: #ddd;
+    /* Phòng trường hợp không có ảnh */
+    color: white;
+    padding: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Mặt sau: hiển thị thông tin từ vựng */
+.topic-card-back {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #ccc;
+    /* Màu xanh */
+    color: black;
+    transform: rotateY(180deg);
+    /* Xoay mặt sau 180 độ */
+    font-size: 16px;
+    font-weight: bold;
+}

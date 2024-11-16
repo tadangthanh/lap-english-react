@@ -1,14 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import MainTopicSelect from './MainTopicSelect';
 import { MainTopic } from '../../modal/MainTopic';
 import { verifyToken } from '../../api/ApiUtils';
 import { useNavigate } from 'react-router-dom';
-import { createMainTopic, deleteMainTopic, getAllMainTopic, getMainTopicPage, updateMainTopic } from '../../api/maintopic/MainTopicApi';
+import { createMainTopic, deleteMainTopic, getMainTopicPage, updateMainTopic } from '../../api/maintopic/MainTopicApi';
 import { Loading } from '../common/LoadingSpinner';
 import { toast, ToastContainer } from 'react-toastify';
-import { SubTopic } from './SubTopicPage';
 import { TableMainTopic } from './MainTopicTable';
 import { PageResponse } from '../../modal/PageResponse';
+import { DataContext } from '../context/DataContext';
 const MainTopicPage: React.FC = () => {
     const [mainTopics, setMainTopics] = useState<MainTopic[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -43,12 +42,12 @@ const MainTopicPage: React.FC = () => {
                 setMainTopics(response.data.items);
                 setPageResponse(response.data);
             } else {
-                toast.error(response.message, { containerId: 'sub-topic' });
+                toast.error(response.message, { containerId: 'page-main-topic' });
             }
         }).catch((error) => {
-            toast.error(error.message, { containerId: 'sub-topic' });
+            toast.error(error.message, { containerId: 'page-main-topic' });
         });
-    }, [page]);
+    }, [page, size]);
 
     useEffect(() => {
         inputMainTopicName?.current?.focus();
@@ -59,6 +58,15 @@ const MainTopicPage: React.FC = () => {
             setMainTopicName('');
         }
     }, [mainTopicEdit]);
+    const handleKeyDown = (event: any) => {
+        if (event.key === "Enter") {
+            if (mainTopicEdit) {
+                handleUpdateMainTopic();
+            } else {
+                handleAddMainTopic();
+            }
+        }
+    };
     const handleAddMainTopic = () => {
         if (mainTopicName.trim() === '') {
             setError('Tên không được để trống');
@@ -121,44 +129,50 @@ const MainTopicPage: React.FC = () => {
         }
     }
     const inputMainTopicName = useRef<HTMLInputElement>(null);
-
+    const handleChangePageSize = (size: number) => {
+        setSize(size);
+        setPage(0);
+    }
     return (
-        <div className="p-4">
-            <h2>Chủ đề</h2>
-            <Loading loading={isLoading} />
-            <ToastContainer containerId='page-main-topic' />
-            {/* Form nhập thông tin Chủ đề chính */}
-            <div className="mb-4 col-md-6">
-                <label htmlFor="mainTopicName" className="form-label">
-                    Tên Chủ đề chính
-                </label>
-                <input
-                    ref={inputMainTopicName}
-                    type="text"
-                    id="mainTopicName"
-                    className="form-control mb-2"
-                    placeholder="Nhập tên chủ đề chính"
-                    value={mainTopicName}
-                    onChange={(e) => {
-                        setMainTopicName(e.target.value);
-                        setError('');
-                    }}
+        <DataContext.Provider value={{ size, handleChangePageSize }}>
+            <div className="p-4">
+                <h2>Chủ đề</h2>
+                <Loading loading={isLoading} />
+                <ToastContainer containerId='page-main-topic' />
+                {/* Form nhập thông tin Chủ đề chính */}
+                <div className="mb-4 col-md-6">
+                    <label htmlFor="mainTopicName" className="form-label">
+                        Tên Chủ đề chính
+                    </label>
+                    <input
+                        ref={inputMainTopicName}
+                        type="text"
+                        id="mainTopicName"
+                        className="form-control mb-2"
+                        placeholder="Nhập tên chủ đề chính"
+                        value={mainTopicName}
+                        onKeyDown={handleKeyDown}
+                        onChange={(e) => {
+                            setMainTopicName(e.target.value);
+                            setError('');
+                        }}
+                    />
+                    <div className='text-danger mb-2'>{error}</div>
+                    {!mainTopicEdit && <button className="btn btn-primary" onClick={handleAddMainTopic}>
+                        Thêm Chủ đề chính
+                    </button>}
+                    {mainTopicEdit && <button className="btn btn-secondary" onClick={handleUpdateMainTopic}>
+                        Cập nhật
+                    </button>}
+                </div>
+                <TableMainTopic mainTopics={mainTopics} pageResponse={pageResponse} setMainTopicEdit={setMainTopicEdit}
+                    mainTopicEdit={mainTopicEdit}
+                    handleDeleteMainTopic={handleDeleteMainTopic}
+                    page={page} setPage={setPage}
                 />
-                <div className='text-danger mb-2'>{error}</div>
-                {!mainTopicEdit && <button className="btn btn-primary" onClick={handleAddMainTopic}>
-                    Thêm Chủ đề chính
-                </button>}
-                {mainTopicEdit && <button className="btn btn-secondary" onClick={handleUpdateMainTopic}>
-                    Cập nhật
-                </button>}
-            </div>
-            <TableMainTopic mainTopics={mainTopics} pageResponse={pageResponse} setMainTopicEdit={setMainTopicEdit}
-                mainTopicEdit={mainTopicEdit}
-                handleDeleteMainTopic={handleDeleteMainTopic}
-                page={page} setPage={setPage}
-            />
 
-        </div>
+            </div>
+        </DataContext.Provider>
     );
 };
 

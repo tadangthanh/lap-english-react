@@ -33,8 +33,8 @@ export const Paging: React.FC<PagingProps> = ({ pageResponse, setPage, page }) =
                     </li>
                 )}
 
-                <li className="page-item active">
-                    <a className="page-link" href="#">{pageResponse.pageNo}</a>
+                <li className="page-item">
+                    <a className="page-link" href="#" style={{ backgroundColor: "blue", color: "white" }}>{pageResponse.pageNo}</a>
                 </li>
 
                 {pageResponse.pageNo + 1 < pageResponse.totalPage && (

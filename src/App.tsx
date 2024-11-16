@@ -2,10 +2,10 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import AppNavbar from './components/Navbar';
-import Vocabulary from './components/vocabulary/VocabularyAdd';
+import WordPage from './components/word/WordPage';
 import Login from './components/LoginPage';
 import MainTopicPage from './components/topic/MainTopicPage';
-import { SubTopic } from './components/topic/SubTopicPage';
+import { SubTopicPage } from './components/topic/SubTopicPage';
 
 const AppLayout: React.FC = () => {
   const location = useLocation();
@@ -25,10 +25,10 @@ const AppLayout: React.FC = () => {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/" element={<h2>Trang chủ</h2>} />
-              <Route path="/vocabulary" element={<Vocabulary />} />
+              <Route path="/vocabulary" element={<WordPage />} />
               <Route path="/topic" element={<MainTopicPage />} />
               {/* Thêm các route khác ở đây */}
-              <Route path="/sub-topic" element={<SubTopic />} />
+              <Route path="/sub-topic" element={<SubTopicPage />} />
             </Routes>
           </div>
         </div>

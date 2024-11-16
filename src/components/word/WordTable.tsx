@@ -1,14 +1,14 @@
 import React from 'react';
-import { MdlWord } from '../../modal/MdlWord';
+import { Word } from '../../modal/Word';
 
 
-interface VocabularyTableProps {
-    words: MdlWord[];
-    onEdit?: (word: MdlWord) => void;
+interface WordTableProps {
+    words: Word[];
+    onEdit?: (word: Word) => void;
     onDelete?: (id: number) => void;
 }
 
-const VocabularyTable: React.FC<VocabularyTableProps> = ({ words, onEdit, onDelete }) => {
+const WordTable: React.FC<WordTableProps> = ({ words, onEdit, onDelete }) => {
     return (
         <table className="table table-striped table-bordered">
             <thead>
@@ -62,4 +62,4 @@ const VocabularyTable: React.FC<VocabularyTableProps> = ({ words, onEdit, onDele
     );
 };
 
-export default VocabularyTable;
+export default WordTable;

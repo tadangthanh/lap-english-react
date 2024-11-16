@@ -42,6 +42,88 @@ export async function post(url: string, retryCount = 0, body: any): Promise<any>
         throw error;
     }
 }
+export async function postFormData(
+    url: string,
+    retryCount = 0,
+    body: any,
+    file?: File
+): Promise<any> {
+    const token = getToken();
+
+    try {
+        // Khởi tạo FormData
+        const formData = new FormData();
+
+        // Thêm file nếu có
+        if (file) {
+            formData.append("file", file);
+        }
+
+        // Thêm JSON payload
+        const jsonBlob = new Blob([JSON.stringify(body)], { type: "application/json" });
+        formData.append("data", jsonBlob);
+
+        // Gửi request
+        const response = await fetch(url, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            method: "POST",
+            body: formData,
+        });
+
+        if (response.status === 401 && retryCount < 1) {
+            await refreshTokens();
+            return postFormData(url, retryCount + 1, body, file);
+        }
+
+        return await response.json();
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function putFormData(
+    url: string,
+    retryCount = 0,
+    body: any,
+    file?: File
+): Promise<any> {
+    const token = getToken();
+
+    try {
+        // Khởi tạo FormData
+        const formData = new FormData();
+
+        // Thêm file nếu có
+        if (file) {
+            formData.append("file", file);
+        }
+
+        // Thêm JSON payload
+        const jsonBlob = new Blob([JSON.stringify(body)], { type: "application/json" });
+        formData.append("data", jsonBlob);
+
+        // Gửi request
+        const response = await fetch(url, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            method: "PUT",
+            body: formData,
+        });
+
+        if (response.status === 401 && retryCount < 1) {
+            await refreshTokens();
+            return putFormData(url, retryCount + 1, body, file);
+        }
+
+        return await response.json();
+    } catch (error) {
+        throw error;
+    }
+}
+
 export async function del(url: string, retryCount = 0): Promise<any> {
     const token = getToken();
     try {
@@ -80,6 +162,7 @@ export async function put(url: string, retryCount = 0, body: any): Promise<any> 
         throw error;
     }
 }
+
 
 
 export async function requestWithMethod(url: string, method = 'GET', body: any, retryCount = 0): Promise<any> {

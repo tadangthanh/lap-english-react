@@ -1,16 +1,20 @@
 import { BaseModal } from "./BaseModal";
+import { WordLevel } from "./WordLevel";
+import { WordType } from "./WordType";
 
-export class MdlWord extends BaseModal {
+export class Word extends BaseModal {
     word: string;
     meaning: string;
     pronounceUK: string;
     pronounceUS: string;
-    type: string;
-    level: string;
+    type: WordType;
+    level: WordLevel;
     example: string;
     idSubTopic: number;
     topicName: string;
-    imageUrl: string;
+    audioUkBlobName: string;
+    audioUsBlobName: string;
+    imageBlobName: string;
 
     constructor(
         id: number,
@@ -18,12 +22,14 @@ export class MdlWord extends BaseModal {
         meaning: string,
         pronounceUK: string,
         pronounceUS: string,
-        type: string,
-        level: string,
+        type: WordType,
+        level: WordLevel,
         example: string,
         idSubTopic: number,
         topicName: string,
-        imageUrl: string,
+        audioUkBlobName: string,
+        audioUsBlobName: string,
+        imageBlobName: string,
         createdAt: Date,
         updatedAt: Date,
         updateBy: string
@@ -38,6 +44,8 @@ export class MdlWord extends BaseModal {
         this.example = example;
         this.idSubTopic = idSubTopic;
         this.topicName = topicName;
-        this.imageUrl = imageUrl;
+        this.audioUkBlobName = audioUkBlobName;
+        this.audioUsBlobName = audioUsBlobName;
+        this.imageBlobName = imageBlobName;
     }
 }
