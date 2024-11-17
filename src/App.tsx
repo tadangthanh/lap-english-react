@@ -5,7 +5,8 @@ import AppNavbar from './components/Navbar';
 import WordPage from './components/word/WordPage';
 import Login from './components/LoginPage';
 import MainTopicPage from './components/topic/MainTopicPage';
-import { SubTopicPage } from './components/topic/SubTopicPage';
+import { SubTopicPageManager } from './components/topic/SubTopicPageManager';
+import { WordPageDetail } from './components/word/WordPageDetail';
 
 const AppLayout: React.FC = () => {
   const location = useLocation();
@@ -25,10 +26,11 @@ const AppLayout: React.FC = () => {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/" element={<h2>Trang chủ</h2>} />
-              <Route path="/vocabulary" element={<WordPage />} />
+              <Route path="/word" element={<WordPage />} />
               <Route path="/topic" element={<MainTopicPage />} />
+              <Route path="/word/:subTopicId" element={<WordPageDetail />} />
               {/* Thêm các route khác ở đây */}
-              <Route path="/sub-topic" element={<SubTopicPage />} />
+              <Route path="/sub-topic" element={<SubTopicPageManager />} />
             </Routes>
           </div>
         </div>

@@ -1,8 +1,11 @@
 import { SubTopic } from './../../modal/SubTopic';
-import { apiUrl, del, get, post, postFormData, put, putFormData } from "../ApiUtils";
+import { apiUrl, del, get, postFormData, putFormData } from "../ApiUtils";
 
-export const getSubTopicPage = async (page = 0, size = 10) => {
-    return await get(`${apiUrl}/sub-topic?page=${page}&size=${size}`);
+export const getSubTopicPage = async (page = 0, size = 10, sortBy?: String, direction?: String, subtopic?: String) => {
+    return await get(`${apiUrl}/sub-topic?page=${page}&size=${size}&sort=${sortBy},${direction}&subtopic=${subtopic}`);
+}
+export const getSubTopicByName = async (page = 0, size = 10, name: String, sort?: String) => {
+    return await get(`${apiUrl}/sub-topic?page=${page}&size=${size}&sort=${sort}?name=${name}`);
 }
 export const getAllSubTopic = async () => {
     return await get(`${apiUrl}/sub-topic/list`);

@@ -10,8 +10,8 @@ export class Word extends BaseModal {
     type: WordType;
     level: WordLevel;
     example: string;
-    idSubTopic: number;
-    topicName: string;
+    subTopicId: number;
+    subTopicName: string;
     audioUkBlobName: string;
     audioUsBlobName: string;
     imageBlobName: string;
@@ -25,8 +25,8 @@ export class Word extends BaseModal {
         type: WordType,
         level: WordLevel,
         example: string,
-        idSubTopic: number,
-        topicName: string,
+        subTopicId: number,
+        subTopicName: string,
         audioUkBlobName: string,
         audioUsBlobName: string,
         imageBlobName: string,
@@ -42,8 +42,8 @@ export class Word extends BaseModal {
         this.type = type;
         this.level = level;
         this.example = example;
-        this.idSubTopic = idSubTopic;
-        this.topicName = topicName;
+        this.subTopicId = subTopicId;
+        this.subTopicName = subTopicName;
         this.audioUkBlobName = audioUkBlobName;
         this.audioUsBlobName = audioUsBlobName;
         this.imageBlobName = imageBlobName;

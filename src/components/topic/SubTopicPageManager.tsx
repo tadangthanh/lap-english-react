@@ -3,7 +3,7 @@ import { MainTopic } from "../../modal/MainTopic";
 import MainTopicSelect from "./MainTopicSelect";
 import { getAllMainTopic } from "../../api/maintopic/MainTopicApi";
 import { toast, ToastContainer } from "react-toastify";
-import { SubTopicTable } from "./SubTopicTable";
+import { SubTopicManagerTable } from "./SubTopicManagerTable";
 import { SubTopic } from "../../modal/SubTopic";
 import { PageResponse } from "../../modal/PageResponse";
 import { DataContext } from '../context/DataContext';
@@ -12,21 +12,27 @@ import { useNavigate } from "react-router-dom";
 import { verifyToken } from "../../api/ApiUtils";
 import { Loading } from "../common/LoadingSpinner";
 import ConfirmationModal from "../common/ConfirmationModal";
+import { SearchOperation } from "../../modal/SearchOperation";
 
 
-export const SubTopicPage: React.FC = () => {
+export const SubTopicPageManager: React.FC = () => {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [subTopicName, setSubTopicName] = useState<string>(''); // State cho tên chủ đề con
     const fileInputRef = useRef<HTMLInputElement | null>(null); // Ref cho input ảnh\
     const [mainTopics, setMainTopics] = useState<MainTopic[]>([]);
     const [mainTopicIdSelected, setMainTopicIdSelected] = useState<number>(-1);
+    const [direction, setDirection] = useState<string>('asc');
+    const [sortBy, setSortBy] = useState<string>('name');
+    const [searchValue, setSearchValue] = useState<string>('');
+    const [subTopicSearch, setSubTopicSearch] = useState<string>('');
+    const [searchField, setSearchField] = useState<string>('name');
+    const [searchOperation, setSearchOperation] = useState<SearchOperation>(SearchOperation.LIKE);
     const [subTopics, setSubTopics] = useState<SubTopic[]>([]);
     const [page, setPage] = useState<number>(0);
     const [file, setFile] = useState<File | null>(null);
     const [size, setSize] = useState<number>(10);
     const [isLoading, setIsLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
-    const [error, setError] = useState<string>('');
     const navigate = useNavigate();
     useEffect(() => {
         setIsLoading(false);
@@ -38,7 +44,9 @@ export const SubTopicPage: React.FC = () => {
         })
         setIsLoading(false);
     }, []);
-
+    useEffect(() => {
+        setSubTopicSearch(searchField + searchOperation + searchValue)
+    }, [searchField, searchOperation, searchValue]);
     const [subTopicEdit, setSubTopicEdit] = useState<SubTopic | null>(null);
 
     const [pageResponse, setPageResponse] = useState<PageResponse<SubTopic>>({
@@ -61,7 +69,7 @@ export const SubTopicPage: React.FC = () => {
     }
     useEffect(() => {
         setSubTopicEdit(null);
-        getSubTopicPage(page, size).then((response: any) => {
+        getSubTopicPage(page, size, sortBy, direction, subTopicSearch).then((response: any) => {
             if (response.status === 200) {
                 setSubTopics(response.data.items);
                 setPageResponse(response.data);
@@ -71,7 +79,7 @@ export const SubTopicPage: React.FC = () => {
         }).catch((error) => {
             toast.error(error.message, { containerId: 'sub-topic' });
         });
-    }, [page, size]);
+    }, [page, size, direction]);
     useEffect(() => {
         getAllMainTopic().then((response: any) => {
             if (response.status === 200) {
@@ -85,7 +93,7 @@ export const SubTopicPage: React.FC = () => {
     }, []);
     // Xử lý khi người dùng chọn ảnh
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (subTopicEdit?.imageUrl) {
+        if (subTopicEdit?.blobName) {
             setShowModal(true);
         }
         const file = event.target.files && event.target.files[0];
@@ -115,9 +123,10 @@ export const SubTopicPage: React.FC = () => {
         const newSubTopic: SubTopic = {
             id: 0,
             name: subTopicName,
-            imageUrl: '',
+            blobName: '',
             mainTopicId: mainTopicIdSelected,
             mainTopicName: '',
+            // wordCount: 0,
             createdAt: new Date(),
             updatedAt: new Date(),
             updateBy: ''
@@ -186,6 +195,41 @@ export const SubTopicPage: React.FC = () => {
         }
         setFile(null);
     }
+    const handleSearchByName = () => {
+        setPage(0);
+        getSubTopicPage(page, 10, sortBy, direction, subTopicSearch).then((response) => {
+            if (response.status === 200) {
+                if (response.data.items.length === 0) {
+                    alert(`Không tìm thấy chủ đề với tên ${subTopicSearch}`);
+                    setSearchValue('');
+                    return;
+                }
+                setSubTopics(response.data.items);
+                setPageResponse(response.data);
+            }
+        });
+    }
+    const handleChangeSort = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setDirection(e.target.value);
+        setPage(0);
+    }
+    const handleInitPageSubTopic = () => {
+        getSubTopicPage(page, size, sortBy, direction, '').then((response) => {
+            if (response.status === 200) {
+                setSubTopics(response.data.items);
+                setPageResponse(response.data);
+            }
+        });
+    }
+    const handleInputSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.value === '') {
+            setSearchValue('');
+            setPage(0);
+            handleInitPageSubTopic();
+            return;
+        }
+        setSearchValue(e.target.value);
+    }
     return (
         <DataContext.Provider value={{ size, handleChangePageSize }}>
             <div className="mb-4 mt-5" >
@@ -222,7 +266,7 @@ export const SubTopicPage: React.FC = () => {
 
                             {/* Hiển thị ảnh xem trước nếu có */}
                             {imagePreview && (
-                                <div className="mt-3 position-relative">
+                                <div className="mt-3 position-relative" style={{ width: "200px" }}>
                                     <label className="form-label">Xem trước ảnh:</label>
                                     <img
                                         src={imagePreview}
@@ -259,8 +303,32 @@ export const SubTopicPage: React.FC = () => {
                                     </button>}
                                 </div>
                             </div>
+
                         </div>
-                        <SubTopicTable
+                        <div className='d-flex align-items-center'>
+                            {/* Sắp xếp theo vần A-Z */}
+                            <div className='me-2'>
+                                <select className="form-select" onChange={handleChangeSort}>
+                                    <option >Sắp xếp</option>
+                                    <option value="asc">A-Z</option>
+                                    <option value="desc">Z-A</option>
+                                </select>
+                            </div>
+                            <div>
+                                <div className="flex items-center">
+                                    <input
+                                        value={searchValue}
+                                        type="text"
+                                        placeholder="Tên chủ đề"
+                                        className="p-2 border border-gray-300 rounded mr-2 me-2"
+                                        onChange={handleInputSearchChange}
+                                    />
+                                    <button className="p-2 bg-blue text-black rounded" onClick={handleSearchByName}>Tìm kiếm</button>
+                                </div>
+
+                            </div>
+                        </div>
+                        <SubTopicManagerTable
                             subTopics={subTopics}
                             handleDeleteSubTopic={handleDeleteSubTopic}
                             setSubTopicEdit={setSubTopicEdit}

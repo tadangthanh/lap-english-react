@@ -5,6 +5,7 @@ import { Paging } from "../common/Paging";
 import ConfirmationModal from "../common/ConfirmationModal";
 import { PageSize } from "../common/PageSize";
 import { DataContext } from "../context/DataContext";
+import { baseUrlBlob } from "../../api/ApiUtils";
 
 interface TableSubTopicProps {
     subTopics: SubTopic[];
@@ -16,7 +17,7 @@ interface TableSubTopicProps {
     handleDeleteSubTopic: (id: number) => void;
 }
 
-export const SubTopicTable: React.FC<TableSubTopicProps> = ({
+export const SubTopicManagerTable: React.FC<TableSubTopicProps> = ({
     subTopics,
     pageResponse,
     setPage,
@@ -43,6 +44,7 @@ export const SubTopicTable: React.FC<TableSubTopicProps> = ({
                         <th>Tên Chủ đề</th>
                         <th>Ảnh</th>
                         <th>Chủ đề chính</th>
+                        <th>Tổng số từ</th>
                         <th>Ngày tạo</th>
                         <th>Ngày cập nhật</th>
                         <th>Actions</th>
@@ -55,14 +57,17 @@ export const SubTopicTable: React.FC<TableSubTopicProps> = ({
                                 <td style={{ background: subTopicEdit?.id === topic.id ? "grey" : "white" }}>{topic.id}</td>
                                 <td style={{ background: subTopicEdit?.id === topic.id ? "grey" : "white" }}>{topic.name}</td>
                                 <td style={{ background: subTopicEdit?.id === topic.id ? "grey" : "white" }}>
-                                    {topic.imageUrl && <img
-                                        src={topic.imageUrl}
+                                    {topic.blobName && <img
+                                        src={baseUrlBlob + (topic.blobName)}
                                         alt={topic.name}
                                         style={{ width: "50px", height: "50px", cursor: "pointer" }}
-                                        onClick={() => handleImageClick(topic.imageUrl)} // Bắt sự kiện click
+                                        onClick={() => handleImageClick(baseUrlBlob + (topic.blobName))} // Bắt sự kiện click
                                     />}
                                 </td>
                                 <td style={{ background: subTopicEdit?.id === topic.id ? "grey" : "white" }}>{topic.mainTopicName}</td>
+                                <td style={{ background: subTopicEdit?.id === topic.id ? "grey" : "white" }}>
+                                    {topic.wordCount}
+                                </td>
                                 <td style={{ background: subTopicEdit?.id === topic.id ? "grey" : "white" }}>
                                     {new Date(topic.createdAt).toLocaleDateString()}
                                 </td>

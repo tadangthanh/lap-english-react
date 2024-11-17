@@ -3,6 +3,7 @@ import { getRefreshToken, getToken, setRefreshToken, setToken } from './Authenti
 
 export const apiUrl = process.env.REACT_APP_API_URL;
 export const apiWsUrl = process.env.REACT_APP_WS_URL;
+export const baseUrlBlob = process.env.REACT_APP_API_BLOB_URL;
 
 export async function get(url: string, retryCount = 0): Promise<any> {
     const token = getToken();
@@ -250,7 +251,6 @@ async function fetchWithMethodAuthorization(url: string, body: any, method = 'GE
         body: JSON.stringify(body)
     });
 }
-
 export async function refreshTokens() {
     try {
         const url = `http://localhost:8080/auth/refresh`;
@@ -268,7 +268,7 @@ export async function refreshTokens() {
 
         const responseData = await response.json(); // Parse JSON response
 
-        const newAccessToken = responseData.data.token;
+        const newAccessToken = responseData.data.accessToken;
         const newRefreshToken = responseData.data.refreshToken;
         setToken(newAccessToken);
         setRefreshToken(newRefreshToken);
@@ -279,29 +279,6 @@ export async function refreshTokens() {
         throw new Error('Failed to refresh token');
     }
 }
-export const getEmailFromToken = (): string => {
-    const token = getToken() as string;
-    if (!token || token === 'undefined') return '';
-    const payload = token?.split('.')[1];
-    try {
-        return JSON.parse(atob(payload)).sub;
-    } catch (error) {
-        console.error('Invalid base64 string', error);
-        return '';
-    }
-};
-export const getIdFromToken = (): number => {
-    const token = getToken() as string;
-    if (!token) return 0;
-    const payload = token?.split('.')[1];
-    try {
-        return JSON.parse(atob(payload)).id;
-    } catch (error) {
-        console.error('Invalid base64 string', error);
-        return 0;
-    }
-}
-
 // export const baseAvatarUrl = 'http://localhost:8080/api/v1/users/avatar/view/';
 export const verifyToken = async (): Promise<any> => {
     const token = getToken();
@@ -316,19 +293,7 @@ export const verifyToken = async (): Promise<any> => {
         console.error('Failed to verify token:', error);
     }
 }
-export const verifyAdmin = async (): Promise<any> => {
-    const token = getToken();
-    try {
-        const url = apiUrl + "/auth/verify-admin";
-        const response = await fetch(url, {
-            headers: { 'Access-Token': token || '' },
-            method: 'POST',
-        });
-        return await response.json();
-    } catch (error) {
-        console.error('Failed to verify token:', error);
-    }
-}
+
 export const deleteToken = () => {
     Cookies.remove('token');
     Cookies.remove('refreshToken');

@@ -17,7 +17,7 @@ const Sidebar: React.FC = () => {
                     Trang chủ
                 </NavLink>
                 <NavLink
-                    to="/vocabulary"
+                    to="/word"
                     className="nav-link text-secondary mb-3 d-flex align-items-center px-3 py-2"
                     style={({ isActive }) => ({
                         backgroundColor: isActive ? '#e0e0e0' : 'transparent',
