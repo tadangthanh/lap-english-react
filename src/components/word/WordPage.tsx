@@ -79,14 +79,14 @@ const WordPage: React.FC = () => {
     }
     return (
         <div className="p-4">
-            <h2>Chủ đề hiện có</h2>
-            <div className='d-flex align-items-center'>
+            <h2>Word</h2>
+            {subTopics.length > 0 && <div className='d-flex align-items-center'>
                 {/* Sắp xếp theo vần A-Z */}
                 <div className='me-2'>
                     <select className="form-select" onChange={handleChangeSort}>
-                        <option >Sắp xếp</option>
-                        <option value="asc">A-Z</option>
-                        <option value="desc">Z-A</option>
+                        <option >Sort</option>
+                        <option value="asc">a-z</option>
+                        <option value="desc">z-a</option>
                     </select>
                 </div>
                 <div>
@@ -94,15 +94,15 @@ const WordPage: React.FC = () => {
                         <input
                             value={searchValue}
                             type="text"
-                            placeholder="Tên chủ đề"
+                            placeholder="Topic name"
                             className="p-2 border border-gray-300 rounded mr-2 me-2"
                             onChange={handleInputChange}
                         />
-                        <button className="p-2 bg-blue text-black rounded" onClick={handleSearchByName}>Tìm kiếm</button>
+                        <button className="p-2 bg-blue text-black rounded" onClick={handleSearchByName}>Search</button>
                     </div>
 
                 </div>
-            </div>
+            </div>}
 
             {
                 subTopics.map((topic) => (
@@ -113,11 +113,11 @@ const WordPage: React.FC = () => {
                     />
                 ))
             }
-            <Paging
+            {subTopics.length > 0 ? <Paging
                 page={page}
                 setPage={setPage}
                 pageResponse={pageResponse}
-            />
+            /> : <div>Không có dữ liệu</div>}
         </div >
     );
 };

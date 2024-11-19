@@ -9,7 +9,7 @@ import { PageResponse } from "../../modal/PageResponse";
 import { DataContext } from '../context/DataContext';
 import { createSubTopic, deleteSubTopic, getSubTopicPage, updateSubTopic } from "../../api/subtopic/SubTopicApi";
 import { useNavigate } from "react-router-dom";
-import { verifyToken } from "../../api/ApiUtils";
+import { baseUrlBlob, verifyToken } from "../../api/ApiUtils";
 import { Loading } from "../common/LoadingSpinner";
 import ConfirmationModal from "../common/ConfirmationModal";
 import { SearchOperation } from "../../modal/SearchOperation";
@@ -61,7 +61,7 @@ export const SubTopicPageManager: React.FC = () => {
         deleteSubTopic(id).then((response: any) => {
             if (response.status === 204) {
                 setSubTopics((prev) => prev.filter((item) => item.id !== id));
-                toast.success('Xóa thành công', { containerId: 'sub-topic' });
+                toast.success(response.message, { containerId: 'sub-topic' });
             } else {
                 toast.error(response.message, { containerId: 'sub-topic' });
             }
@@ -107,7 +107,6 @@ export const SubTopicPageManager: React.FC = () => {
     const handleImageDelete = () => {
         setFile(null);
         setImagePreview(null);
-        setSubTopicName(''); // Đặt lại tên chủ đề con về chuỗi rỗng
         if (fileInputRef.current) {
             fileInputRef.current.value = ''; // Đặt lại giá trị của input file
         }
@@ -117,7 +116,7 @@ export const SubTopicPageManager: React.FC = () => {
         setIsLoading(true);
         if (!subTopicName || mainTopicIdSelected === -1) {
             setIsLoading(false);
-            toast.error('Vui lòng nhập đủ thông tin', { containerId: 'sub-topic' });
+            toast.error('Please enter complete information', { containerId: 'sub-topic' });
             return
         }
         const newSubTopic: SubTopic = {
@@ -134,7 +133,7 @@ export const SubTopicPageManager: React.FC = () => {
 
         createSubTopic(newSubTopic, file ?? undefined).then((response: any) => {
             if (response.status === 201) {
-                toast.success('Thêm thành công', { containerId: 'sub-topic' });
+                toast.success(response.message, { containerId: 'sub-topic' });
                 setSubTopics((prev) => [...prev, response.data]);
                 handleImageDelete();
                 setSubTopicName('');
@@ -178,7 +177,7 @@ export const SubTopicPageManager: React.FC = () => {
             }, file ?? undefined).then((response: any) => {
                 setIsLoading(false);
                 if (response.status === 200) {
-                    toast.success('Cập nhật thành công', { containerId: 'sub-topic' });
+                    toast.success(response.message, { containerId: 'sub-topic' });
                     setSubTopics((prev) => prev.map((item) => {
                         if (item.id === response.data.id) {
                             return response.data;
@@ -200,7 +199,7 @@ export const SubTopicPageManager: React.FC = () => {
         getSubTopicPage(page, 10, sortBy, direction, subTopicSearch).then((response) => {
             if (response.status === 200) {
                 if (response.data.items.length === 0) {
-                    alert(`Không tìm thấy chủ đề với tên ${subTopicSearch}`);
+                    alert(`Not found topic with name ${subTopicSearch}`);
                     setSearchValue('');
                     return;
                 }
@@ -235,25 +234,25 @@ export const SubTopicPageManager: React.FC = () => {
             <div className="mb-4 mt-5" >
                 <Loading loading={isLoading} />
                 <ToastContainer containerId='sub-topic' />
-                <h5>Chủ đề phụ</h5>
+                <h5>Sub Topic</h5>
                 <div className=" p-3 mb-3">
                     <div className="row align-items-center">
                         <div className="col-md-6">
                             <label htmlFor="subTopicName" className="form-label">
-                                Tên Chủ đề <span style={{ color: "red" }}>*</span>
+                                Topic name <span style={{ color: "red" }}>*</span>
                             </label>
 
                             <input
                                 type="text"
                                 id="subTopicName"
                                 className="form-control mb-2"
-                                placeholder="Nhập tên chủ đề phụ"
+                                placeholder="Enter sub topic name"
                                 value={subTopicName}
                                 onChange={(e) => setSubTopicName(e.target.value)}
                             />
 
                             <label htmlFor="subTopicImage" className="form-label">
-                                Ảnh minh họa
+                                Image preview
                             </label>
                             <input
                                 type="file"
@@ -267,7 +266,7 @@ export const SubTopicPageManager: React.FC = () => {
                             {/* Hiển thị ảnh xem trước nếu có */}
                             {imagePreview && (
                                 <div className="mt-3 position-relative" style={{ width: "200px" }}>
-                                    <label className="form-label">Xem trước ảnh:</label>
+                                    <label className="form-label">Image preview:</label>
                                     <img
                                         src={imagePreview}
                                         alt="Preview"
@@ -297,9 +296,9 @@ export const SubTopicPageManager: React.FC = () => {
                                 />
                                 <div className="d-flex mt-3">
                                     {subTopicEdit ? <button className="btn btn-secondary" onClick={handleUpdateSubTopic}>
-                                        Cập nhật
+                                        Update
                                     </button> : <button className="btn btn-success" onClick={handleAddSubTopic}>
-                                        Thêm
+                                        Add
                                     </button>}
                                 </div>
                             </div>
@@ -309,9 +308,9 @@ export const SubTopicPageManager: React.FC = () => {
                             {/* Sắp xếp theo vần A-Z */}
                             <div className='me-2'>
                                 <select className="form-select" onChange={handleChangeSort}>
-                                    <option >Sắp xếp</option>
-                                    <option value="asc">A-Z</option>
-                                    <option value="desc">Z-A</option>
+                                    <option >Sort</option>
+                                    <option value="asc">a-z</option>
+                                    <option value="desc">z-a</option>
                                 </select>
                             </div>
                             <div>
@@ -319,11 +318,11 @@ export const SubTopicPageManager: React.FC = () => {
                                     <input
                                         value={searchValue}
                                         type="text"
-                                        placeholder="Tên chủ đề"
+                                        placeholder="Topic name"
                                         className="p-2 border border-gray-300 rounded mr-2 me-2"
                                         onChange={handleInputSearchChange}
                                     />
-                                    <button className="p-2 bg-blue text-black rounded" onClick={handleSearchByName}>Tìm kiếm</button>
+                                    <button className="p-2 bg-blue text-black rounded" onClick={handleSearchByName}>Search</button>
                                 </div>
 
                             </div>
@@ -342,10 +341,10 @@ export const SubTopicPageManager: React.FC = () => {
                 </div>
                 {/* Modal xác nhận xóa */}
                 <ConfirmationModal
-                    title="Thông báo"
-                    message="Việc này sẽ thay thế ảnh hiện tại. Bạn có chắc chắn muốn tiếp tục không?"
-                    labelConfirm="Tiếp tục"
-                    labelCancel="Hủy"
+                    title="Warning"
+                    message="This will replace the current image. Are you sure you want to continue?"
+                    labelConfirm="Continue"
+                    labelCancel="Cancel"
                     colorConfirm="green"
                     show={showModal}
                     onConfirm={() => {

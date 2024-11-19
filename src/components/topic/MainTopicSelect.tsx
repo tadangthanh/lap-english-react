@@ -37,7 +37,7 @@ const MainTopicSelect: React.FC<MainTopicSelectProps> = ({ mainTopics, handleSel
     return (
         <div>
             <label htmlFor="mainTopicSelect" className="form-label">
-                Chọn Chủ đề chính {isRequired && <span className="text-danger">*</span>}
+                Main topic {isRequired && <span className="text-danger">*</span>}
             </label>
             <Select
                 id="mainTopicSelect"

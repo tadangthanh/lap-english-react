@@ -37,16 +37,16 @@ export const SubTopicManagerTable: React.FC<TableSubTopicProps> = ({
 
     return (
         <div className="table-responsive mt-4">
-            <table className="table table-bordered">
+            <table className="table table-striped">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Tên Chủ đề</th>
-                        <th>Ảnh</th>
-                        <th>Chủ đề chính</th>
-                        <th>Tổng số từ</th>
-                        <th>Ngày tạo</th>
-                        <th>Ngày cập nhật</th>
+                        <th>Name</th>
+                        <th>Image preview</th>
+                        <th>Main Topic</th>
+                        <th>Total word</th>
+                        <th>Created date</th>
+                        <th>Last modified date</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -106,19 +106,19 @@ export const SubTopicManagerTable: React.FC<TableSubTopicProps> = ({
                     ) : (
                         <tr>
                             <td colSpan={8} className="text-center">
-                                Không có chủ đề phụ nào
+                                No topics yet
                             </td>
                         </tr>
                     )}
                 </tbody>
             </table>
-            <Paging page={page} setPage={setPage} pageResponse={pageResponse} />
-            {/* Modal xác nhận xóa */}
+
+            {subTopics.length > 0 && <Paging page={page} setPage={setPage} pageResponse={pageResponse} />}            {/* Modal xác nhận xóa */}
             <ConfirmationModal
-                title="Xác nhận xóa"
-                message="Bạn có chắc chắn muốn xóa chủ đề phụ này không? Việc này sẽ xóa tất cả các đối tượng phụ thuộc vào chủ đề phụ này."
-                labelConfirm="Xóa"
-                labelCancel="Hủy"
+                title="Confirm"
+                message="Are you sure you want to delete this topic? This action will delete all objects that depend on this topic."
+                labelConfirm="Delete"
+                labelCancel="Cancel"
                 colorConfirm="red"
                 show={showModal}
                 onConfirm={() => {
@@ -127,10 +127,10 @@ export const SubTopicManagerTable: React.FC<TableSubTopicProps> = ({
                 }}
                 onCancel={() => setShowModal(false)}
             />
-            <PageSize
+            {subTopics.length > 0 && <PageSize
                 size={context.size}
                 handlePageSizeChange={context.handleChangePageSize}
-            />
+            />}
             {/* Modal hiển thị ảnh */}
             {selectedImage && (
                 <div

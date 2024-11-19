@@ -70,7 +70,7 @@
     position: absolute;
     bottom: 0;
     width: 100%;
-    padding: 15px;
+    padding: 10px;
     color: white;
     /* Màu chữ */
     text-align: left;
@@ -80,7 +80,7 @@
 }
 
 .overlay .topic-name {
-    font-size: 16px;
+    font-size: 30px;
     font-weight: 600;
 }
 
@@ -107,7 +107,7 @@
 
 /* Nội dung trên mặt sau */
 .topic-card-back h4 {
-    font-size: 20px;
+    font-size: 35px;
     margin-bottom: 10px;
 }
 

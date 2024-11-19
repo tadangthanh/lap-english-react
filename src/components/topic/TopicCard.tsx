@@ -10,7 +10,6 @@ interface TopicCardProps {
 
 const TopicCard: React.FC<TopicCardProps> = ({ subTopic, handleClick }) => {
     const { id, name, blobName, wordCount, mainTopicName } = subTopic;
-
     return (
         <div className="topic-card" onClick={() => handleClick(id)}>
             <div className="topic-card-inner">
@@ -18,7 +17,7 @@ const TopicCard: React.FC<TopicCardProps> = ({ subTopic, handleClick }) => {
                 <div
                     className={`topic-card-front`}
                     style={{
-                        backgroundImage: `url(${baseUrlBlob + blobName})`,
+                        backgroundImage: `url('${baseUrlBlob + blobName}')`,
                     }}
                 >
                     {!blobName && (
@@ -35,7 +34,7 @@ const TopicCard: React.FC<TopicCardProps> = ({ subTopic, handleClick }) => {
                 {/* Mặt sau */}
                 <div className="topic-card-back d-block">
                     <h4>{name}</h4>
-                    <p>{wordCount ?? 0} từ vựng</p>
+                    <p>{wordCount ?? 0} word</p>
                 </div>
             </div>
         </div>

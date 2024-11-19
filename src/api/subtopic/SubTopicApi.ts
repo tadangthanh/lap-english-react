@@ -20,3 +20,7 @@ export const deleteSubTopic = async (id: number) => {
 export const updateSubTopic = async (SubTopic: SubTopic, file?: File) => {
     return await putFormData(`${apiUrl}/sub-topic/${SubTopic.id}`, 0, SubTopic, file = file);
 }
+
+export const getSubTopicById = async (id: number) => {
+    return await get(`${apiUrl}/sub-topic/${id}`);
+}

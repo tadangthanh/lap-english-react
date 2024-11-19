@@ -6,7 +6,7 @@ interface PageSizeProps {
 export const PageSize: React.FC<PageSizeProps> = ({ size, handlePageSizeChange }) => {
     return (
         <div>
-            <label htmlFor="pageSize" className=" me-3">Số item:</label>
+            <label htmlFor="pageSize" className=" me-3">Item count:</label>
             <select id="pageSize" value={size + ''} onChange={(event: any) => { handlePageSizeChange(+event.target.value) }}>
                 <option value={5}>5</option>
                 <option value={10}>10</option>

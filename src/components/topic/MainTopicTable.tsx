@@ -21,13 +21,13 @@ export const TableMainTopic: React.FC<TableMainTopicProps> = ({ mainTopics, page
     const context = useContext(DataContext);
     return (
         <div className="table-responsive mt-4" >
-            <table className="table table-bordered">
+            <table className="table table-striped">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Tên Chủ đề</th>
-                        <th>Ngày tạo</th>
-                        <th>Ngày cập nhật</th>
+                        <th>Name</th>
+                        <th>Created date</th>
+                        <th>Last modified date</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -57,7 +57,7 @@ export const TableMainTopic: React.FC<TableMainTopicProps> = ({ mainTopics, page
                         ))
                     ) : (
                         <tr>
-                            <td colSpan={5} className="text-center">Không có chủ đề nào</td>
+                            <td colSpan={5} className="text-center">No topics yet</td>
                         </tr>
                     )}
                 </tbody>
@@ -65,10 +65,10 @@ export const TableMainTopic: React.FC<TableMainTopicProps> = ({ mainTopics, page
             <Paging page={page} setPage={setPage} pageResponse={pageResponse} />
             {/* Modal xác nhận xóa */}
             <ConfirmationModal
-                title="Xác nhận xóa"
-                message="Bạn có chắc chắn muốn xóa chủ đề này không? Việc này sẽ xóa tất cả các đối tượng phụ thuộc vào chủ đề này."
-                labelConfirm="Xóa"
-                labelCancel="Hủy"
+                title="Confirm"
+                message="Are you sure you want to delete this topic? This will delete all objects that depend on this topic.."
+                labelConfirm="Delete"
+                labelCancel="Cancel"
                 colorConfirm="red"
                 show={showModal}
                 onConfirm={() => { handleDeleteMainTopic(mainTopicId); setShowModal(false); }}

@@ -7,11 +7,13 @@ import { Word } from "../../modal/Word";
 import { PageResponse } from "../../modal/PageResponse";
 import { SearchOperation } from "../../modal/SearchOperation";
 import { baseUrlBlob, verifyToken } from "../../api/ApiUtils";
-import { createWord, getWordPage } from "../../api/word/WordApi";
+import { createWord, deleteWord, getWordPage } from "../../api/word/WordApi";
 import { toast, ToastContainer } from "react-toastify";
 import { Loading } from "../common/LoadingSpinner";
 import { DataContext } from '../context/DataContext';
 import ConfirmationModal from "../common/ConfirmationModal";
+import { getSubTopicById } from "../../api/subtopic/SubTopicApi";
+import { SubTopic } from "../../modal/SubTopic";
 
 interface WordPageDetailProps { }
 
@@ -28,7 +30,6 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = () => {
     const [wordSearch, setWordSearch] = useState<string>('subTopic.id:' + subTopicId);
     const [isLoading, setIsLoading] = useState(false);
     const [searchOperation, setSearchOperation] = useState<SearchOperation>(SearchOperation.LIKE);
-    const [wordEdit, setWordEdit] = useState<Word | null>(null);
     const [file, setFile] = useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement | null>(null); // Ref cho input ảnh\
     const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -41,9 +42,16 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = () => {
     const [level, setLevel] = useState<WordLevel>(WordLevel.A1);
     const [example, setExample] = useState<string>('');
     const [subTopicIdMdl, setSubTopicIdMdl] = useState<number>(0);
+    const [subTopic, setSubTopic] = useState<SubTopic | null>(null);
     useEffect(() => {
         if (subTopicId) {
             setSubTopicIdMdl(parseInt(subTopicId));
+            getSubTopicById(parseInt(subTopicId)).then((response: any) => {
+                if (response.status !== 200) {
+                    navigate('/login');
+                }
+                setSubTopic(response.data);
+            });
         } else {
             navigate(-1)
         }
@@ -91,36 +99,25 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = () => {
     }, [searchField, searchOperation, searchValue]);
     const [isShowForm, setIsShowForm] = useState(false);
     const handleDeleteWord = (id: number) => {
-
+        deleteWord(id).then((response: any) => {
+            if (response.status === 204) {
+                toast.success(response.message, { containerId: 'word' });
+                setWords((prev) => prev.filter((word) => word.id !== id));
+            } else {
+                toast.error(response.message, { containerId: 'word' });
+            }
+        });
     }
     const handleChangePageSize = (size: number) => {
         setSize(size);
         setPage(0);
     }
-    useEffect(() => {
-        if (wordEdit) {
-            buttonFormRef.current?.click();
-            setIsShowForm(true);
-            setWord(wordEdit.word);
-            setMeaning(wordEdit.meaning);
-            setPronounceUK(wordEdit.pronounceUK);
-            setPronounceUS(wordEdit.pronounceUS);
-            setType(wordEdit.type);
-            setLevel(wordEdit.level);
-            setExample(wordEdit.example);
-            setImagePreview(baseUrlBlob + wordEdit.imageBlobName);
-        } else {
-            clearForm();
-        }
-    }, [wordEdit]);
+
     const buttonFormRef = React.useRef<HTMLButtonElement>(null);
     // modal xác nhận xóa
     const [showModal, setShowModal] = useState(false);
     // Xử lý khi người dùng chọn ảnh
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (wordEdit?.imageBlobName) {
-            setShowModal(true);
-        }
         const file = event.target.files && event.target.files[0];
         if (file) {
             const imageUrl = URL.createObjectURL(file);
@@ -153,13 +150,11 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = () => {
         setExample('');
         setFile(null);
         setImagePreview(null);
-        setWordEdit(null);
         handleClearImageInput();
     }
     // xử lý thêm từ mới
     const handleAddWord = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        setIsLoading(true);
         const wordAdd = new Word(0, word, meaning, pronounceUK, pronounceUS, type, level, example, subTopicIdMdl, '', '', '', '', new Date(), new Date(), '');
         createWord(wordAdd, file ?? undefined).then((response: any) => {
             if (response.status === 201) {
@@ -168,14 +163,60 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = () => {
                 clearForm();
                 setIsShowForm(false);
                 handleImageDelete();
-                setWordEdit(null);
-                setIsLoading(false);
                 setPage(0);
             } else {
-                setIsLoading(false);
                 toast.error(response.message, { containerId: 'word' });
             }
         });
+        clearForm();
+    }
+    const handleInitPageWord = () => {
+        setIsLoading(true);
+        getWordPage(page, size, sortBy, direction, "subTopic.id:" + subTopicId).then((response: any) => {
+            if (response.status === 200) {
+                setWords(response.data.items);
+                setPageResponse(response.data);
+            } else {
+                toast.error(response.message, { containerId: 'word' });
+            }
+        }).catch((error) => {
+            toast.error(error.message, { containerId: 'word' });
+        });
+        setIsLoading(false);
+    }
+    useEffect(() => {
+        if (searchValue === '') {
+            handleInitPageWord();
+            return;
+        }
+    }, [searchValue]);
+    const handleInputSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.value === '') {
+            setSearchValue('');
+            setPage(0);
+            return;
+        }
+        setSearchValue(e.target.value);
+    }
+    // tìm kiếm theo word
+    const handleSearchByName = () => {
+        setPage(0);
+        getWordPage(page, 10, sortBy, direction, wordSearch).then((response) => {
+            if (response.status === 200) {
+                if (response.data.items.length === 0) {
+                    alert(`Not found topic with name: ${searchValue}`);
+                    setSearchValue('');
+                    return;
+                }
+                setWords(response.data.items);
+                setPageResponse(response.data);
+            }
+        });
+    }
+    // xử lý sắp xếp
+    const handleChangeSort = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setDirection(e.target.value);
+        setPage(0);
     }
     return (
         <DataContext.Provider value={{ size, handleChangePageSize }}>
@@ -189,7 +230,7 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = () => {
                     >
                         <i className="fas fa-arrow-left me-2"></i>Back
                     </button>
-                    <div style={{ margin: "auto" }}> <h1 className="">Word Management</h1></div>
+                    <div style={{ margin: "auto" }}> <h1 className="">{subTopic?.name}</h1></div>
                 </div>
 
                 {/* Nút Add New Word */}
@@ -347,7 +388,7 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = () => {
                                 {/* Hiển thị ảnh xem trước nếu có */}
                                 {imagePreview && (
                                     <div className="mt-3 position-relative" style={{ width: "200px" }}>
-                                        <label className="form-label">Xem trước ảnh:</label>
+                                        <label className="form-label">Image preview:</label>
                                         <img
                                             src={imagePreview}
                                             alt="Preview"
@@ -383,7 +424,6 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = () => {
                                 onClick={() => {
                                     clearForm();
                                     setIsShowForm(false);
-                                    setWordEdit(null);
                                 }}
                                 className="btn btn-secondary ms-2"
                                 type="button"
@@ -397,11 +437,32 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = () => {
                         </div>
                     </form>
                 </div>
+                <div className='d-flex align-items-center'>
+                    {/* Sắp xếp theo vần A-Z */}
+                    <div className='me-2'>
+                        <select className="form-select" onChange={handleChangeSort}>
+                            <option value="asc" >Sort</option>
+                            <option value="asc">a-z</option>
+                            <option value="desc">z-a</option>
+                        </select>
+                    </div>
+                    <div>
+                        <div className="flex items-center">
+                            <input
+                                value={searchValue}
+                                type="text"
+                                placeholder="word"
+                                className="p-2 border border-gray-300 rounded mr-2 me-2"
+                                onChange={handleInputSearchChange}
+                            />
+                            <button className="p-2 bg-blue text-black rounded" onClick={handleSearchByName}>Search</button>
+                        </div>
+
+                    </div>
+                </div>
                 <WordManagerTable
                     words={words}
                     handleDeleteWord={handleDeleteWord}
-                    setWordEdit={setWordEdit}
-                    wordEdit={wordEdit}
                     page={page}
                     setPage={setPage}
                     pageResponse={pageResponse}
@@ -409,10 +470,10 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = () => {
             </div>
             {/* Modal xác nhận xóa */}
             <ConfirmationModal
-                title="Thông báo"
-                message="Việc này sẽ thay thế ảnh hiện tại. Bạn có chắc chắn muốn tiếp tục không?"
-                labelConfirm="Tiếp tục"
-                labelCancel="Hủy"
+                title="Confirm"
+                message="This will replace the current image. Are you sure you want to continue?"
+                labelConfirm="Continue"
+                labelCancel="Cancel"
                 colorConfirm="green"
                 show={showModal}
                 onConfirm={() => {

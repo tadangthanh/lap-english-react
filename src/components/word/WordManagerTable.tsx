@@ -12,8 +12,6 @@ interface TableWordProps {
     pageResponse: PageResponse<Word>;
     setPage: (page: number) => void;
     page: number;
-    setWordEdit: (word: Word | null) => void;
-    wordEdit: Word | null;
     handleDeleteWord: (id: number) => void;
 }
 
@@ -22,8 +20,6 @@ export const WordManagerTable: React.FC<TableWordProps> = ({
     pageResponse,
     setPage,
     page,
-    setWordEdit,
-    wordEdit,
     handleDeleteWord,
 }) => {
     const [showModal, setShowModal] = useState(false);
@@ -42,7 +38,7 @@ export const WordManagerTable: React.FC<TableWordProps> = ({
 
     return (
         <div className="table-responsive mt-4">
-            <table className="table table-bordered">
+            <table className="table table-striped">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -62,22 +58,22 @@ export const WordManagerTable: React.FC<TableWordProps> = ({
                     {words.length > 0 ? (
                         words.map((word) => (
                             <tr key={word.id}>
-                                <td style={{ background: wordEdit?.id === word.id ? "grey" : "white" }}>
+                                <td style={{ background: "white" }}>
                                     {word.id}
                                 </td>
-                                <td style={{ background: wordEdit?.id === word.id ? "grey" : "white" }}>
+                                <td style={{ background: "white" }}>
                                     {word.word}
                                 </td>
-                                <td style={{ background: wordEdit?.id === word.id ? "grey" : "white" }}>
+                                <td style={{ background: "white" }}>
                                     {word.meaning}
                                 </td>
-                                <td style={{ background: wordEdit?.id === word.id ? "grey" : "white" }}>
+                                <td style={{ background: "white" }}>
                                     {word.pronounceUK}
                                 </td>
-                                <td style={{ background: wordEdit?.id === word.id ? "grey" : "white" }}>
+                                <td style={{ background: "white" }}>
                                     {word.pronounceUS}
                                 </td>
-                                <td style={{ background: wordEdit?.id === word.id ? "grey" : "white" }}>
+                                <td style={{ background: "white" }}>
                                     {word.imageBlobName && (
                                         <img
                                             src={baseUrlBlob + word.imageBlobName}
@@ -88,7 +84,7 @@ export const WordManagerTable: React.FC<TableWordProps> = ({
                                     )}
                                 </td>
                                 {/* Cột Audio */}
-                                <td style={{ background: wordEdit?.id === word.id ? "grey" : "white" }}>
+                                <td style={{ background: "white" }}>
                                     {word.audioUkBlobName && (
                                         <div className="d-flex align-items-center mb-2">
                                             <span>UK</span>
@@ -110,32 +106,16 @@ export const WordManagerTable: React.FC<TableWordProps> = ({
                                         </div>
                                     )}
                                 </td>
-                                <td style={{ background: wordEdit?.id === word.id ? "grey" : "white" }}>
+                                <td style={{ background: "white" }}>
                                     {word.example}
                                 </td>
-                                <td style={{ background: wordEdit?.id === word.id ? "grey" : "white" }}>
+                                <td style={{ background: "white" }}>
                                     {word.type}
                                 </td>
-                                <td style={{ background: wordEdit?.id === word.id ? "grey" : "white" }}>
+                                <td style={{ background: "white" }}>
                                     {word.level}
                                 </td>
                                 <td>
-                                    {wordEdit?.id !== word.id && (
-                                        <button
-                                            className="btn btn-sm btn-secondary me-2"
-                                            onClick={() => setWordEdit(word)}
-                                        >
-                                            Edit <i className="fa-solid fa-pen-to-square"></i>
-                                        </button>
-                                    )}
-                                    {wordEdit?.id === word.id && (
-                                        <button
-                                            className="btn btn-sm btn-warning me-2"
-                                            onClick={() => setWordEdit(null)}
-                                        >
-                                            Cancel
-                                        </button>
-                                    )}
                                     <button
                                         className="btn btn-sm btn-danger"
                                         onClick={() => {
@@ -157,7 +137,7 @@ export const WordManagerTable: React.FC<TableWordProps> = ({
                     )}
                 </tbody>
             </table>
-            <Paging page={page} setPage={setPage} pageResponse={pageResponse} />
+            {words.length > 0 && <Paging page={page} setPage={setPage} pageResponse={pageResponse} />}
             {/* Modal xác nhận xóa */}
             <ConfirmationModal
                 title="Confirm Deletion"
@@ -172,10 +152,10 @@ export const WordManagerTable: React.FC<TableWordProps> = ({
                 }}
                 onCancel={() => setShowModal(false)}
             />
-            <PageSize
+            {words.length > 0 && <PageSize
                 size={context.size}
                 handlePageSizeChange={context.handleChangePageSize}
-            />
+            />}
             {/* Modal hiển thị ảnh */}
             {selectedImage && (
                 <div

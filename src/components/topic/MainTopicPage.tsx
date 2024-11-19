@@ -69,7 +69,7 @@ const MainTopicPage: React.FC = () => {
     };
     const handleAddMainTopic = () => {
         if (mainTopicName.trim() === '') {
-            setError('Tên không được để trống');
+            setError('Name not blank');
             return;
         }
         setError('');
@@ -85,7 +85,7 @@ const MainTopicPage: React.FC = () => {
             if (response.status === 201) {
                 setMainTopics((prev) => [...prev, response.data]);
                 setMainTopicName('');
-                toast.success('Thêm thành công', { containerId: 'page-main-topic' });
+                toast.success(response.message, { containerId: 'page-main-topic' });
             } else {
                 setError(response.message);
                 toast.error(response.message, { containerId: 'page-main-topic' });
@@ -96,7 +96,7 @@ const MainTopicPage: React.FC = () => {
         deleteMainTopic(id).then((response: any) => {
             if (response.status === 204) {
                 setMainTopics((prev) => prev.filter((topic) => topic.id !== id));
-                toast.success('Xóa thành công', { containerId: 'page-main-topic' });
+                toast.success(response.message, { containerId: 'page-main-topic' });
             } else {
                 toast.error(response.message, { containerId: 'page-main-topic' });
             }
@@ -121,7 +121,7 @@ const MainTopicPage: React.FC = () => {
                     }));
                     setMainTopicEdit(null);
                     setMainTopicName('');
-                    toast.success('Cập nhật thành công', { containerId: 'page-main-topic' });
+                    toast.success(response.message, { containerId: 'page-main-topic' });
                 } else {
                     toast.error(response.message, { containerId: 'page-main-topic' });
                 }
@@ -136,20 +136,20 @@ const MainTopicPage: React.FC = () => {
     return (
         <DataContext.Provider value={{ size, handleChangePageSize }}>
             <div className="p-4">
-                <h2>Chủ đề</h2>
+                <h2>Main topic</h2>
                 <Loading loading={isLoading} />
                 <ToastContainer containerId='page-main-topic' />
                 {/* Form nhập thông tin Chủ đề chính */}
                 <div className="mb-4 col-md-6">
                     <label htmlFor="mainTopicName" className="form-label">
-                        Tên Chủ đề chính
+                        Main Topic name
                     </label>
                     <input
                         ref={inputMainTopicName}
                         type="text"
                         id="mainTopicName"
                         className="form-control mb-2"
-                        placeholder="Nhập tên chủ đề chính"
+                        placeholder="Enter main topic name"
                         value={mainTopicName}
                         onKeyDown={handleKeyDown}
                         onChange={(e) => {
@@ -159,10 +159,10 @@ const MainTopicPage: React.FC = () => {
                     />
                     <div className='text-danger mb-2'>{error}</div>
                     {!mainTopicEdit && <button className="btn btn-primary" onClick={handleAddMainTopic}>
-                        Thêm Chủ đề chính
+                        Add
                     </button>}
                     {mainTopicEdit && <button className="btn btn-secondary" onClick={handleUpdateMainTopic}>
-                        Cập nhật
+                        Update
                     </button>}
                 </div>
                 <TableMainTopic mainTopics={mainTopics} pageResponse={pageResponse} setMainTopicEdit={setMainTopicEdit}

@@ -25,7 +25,7 @@ const AppLayout: React.FC = () => {
           <div className={isLoginPage ? 'col-12' : 'col-md-10'}>
             <Routes>
               <Route path="/login" element={<Login />} />
-              <Route path="/" element={<h2>Trang chủ</h2>} />
+              <Route path="/" element={<h2>Home</h2>} />
               <Route path="/word" element={<WordPage />} />
               <Route path="/topic" element={<MainTopicPage />} />
               <Route path="/word/:subTopicId" element={<WordPageDetail />} />

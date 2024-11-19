@@ -14,7 +14,7 @@ const Sidebar: React.FC = () => {
                     })}
                 >
                     <i className="fas fa-home me-2"></i>
-                    Trang chủ
+                    Home
                 </NavLink>
                 <NavLink
                     to="/word"
@@ -25,7 +25,7 @@ const Sidebar: React.FC = () => {
                     })}
                 >
                     <i className="fas fa-book-open me-2"></i>
-                    Từ vựng
+                    Vocabulary
                 </NavLink>
                 <NavLink
                     to="/grammar"
@@ -35,8 +35,8 @@ const Sidebar: React.FC = () => {
                         borderRadius: '5px',
                     })}
                 >
-                    <i className="fas fa-book me-2"></i>
-                    Cấu trúc ngữ pháp
+                    <i className="fa-solid fa-folder-tree me-2"></i>
+                    Grammatical structure
                 </NavLink>
                 <NavLink
                     to="/topic"
@@ -47,7 +47,7 @@ const Sidebar: React.FC = () => {
                     })}
                 >
                     <i className="fa-solid fa-window-restore me-2"></i>
-                    Chủ đề chính
+                    MainTopic
                 </NavLink>
                 <NavLink
                     to="/sub-topic"
@@ -58,7 +58,7 @@ const Sidebar: React.FC = () => {
                     })}
                 >
                     <i className="fa-solid fa-window-restore me-2"></i>
-                    Chủ đề phụ
+                    SubTopic
                 </NavLink>
             </nav>
         </div>
