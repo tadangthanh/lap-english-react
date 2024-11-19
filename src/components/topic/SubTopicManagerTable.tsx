@@ -6,6 +6,7 @@ import ConfirmationModal from "../common/ConfirmationModal";
 import { PageSize } from "../common/PageSize";
 import { DataContext } from "../context/DataContext";
 import { baseUrlBlob } from "../../api/ApiUtils";
+import { useNavigate } from "react-router-dom";
 
 interface TableSubTopicProps {
     subTopics: SubTopic[];
@@ -34,65 +35,75 @@ export const SubTopicManagerTable: React.FC<TableSubTopicProps> = ({
     const handleImageClick = (imageUrl: string) => {
         setSelectedImage(imageUrl);
     };
+    const navigate = useNavigate();
+
+    const handleClickExtractMore = (subTopicId: number) => {
+        navigate(`/sub-topic/${subTopicId}`);
+    }
 
     return (
-        <div className="table-responsive mt-4">
-            <table className="table table-striped">
-                <thead>
+        <div className="overflow-x-auto mt-4">
+            <table className="min-w-full bg-white border border-gray-300 rounded shadow">
+                <thead className="bg-gray-100">
                     <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Image preview</th>
-                        <th>Main Topic</th>
-                        <th>Total word</th>
-                        <th>Created date</th>
-                        <th>Last modified date</th>
-                        <th>Actions</th>
+                        <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-600">ID</th>
+                        <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-600">Name</th>
+                        <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-600">Image preview</th>
+                        <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-600">Main Topic</th>
+                        <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-600">Total word</th>
+                        <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-600">Created date</th>
+                        <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-600">Last modified date</th>
+                        <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-600">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {subTopics.length > 0 ? (
                         subTopics.map((topic) => (
-                            <tr key={topic.id}>
-                                <td style={{ background: subTopicEdit?.id === topic.id ? "grey" : "white" }}>{topic.id}</td>
-                                <td style={{ background: subTopicEdit?.id === topic.id ? "grey" : "white" }}>{topic.name}</td>
-                                <td style={{ background: subTopicEdit?.id === topic.id ? "grey" : "white" }}>
-                                    {topic.blobName && <img
-                                        src={baseUrlBlob + (topic.blobName)}
-                                        alt={topic.name}
-                                        style={{ width: "50px", height: "50px", cursor: "pointer" }}
-                                        onClick={() => handleImageClick(baseUrlBlob + (topic.blobName))} // Bắt sự kiện click
-                                    />}
+                            <tr key={topic.id} className="hover:bg-gray-50">
+                                <td
+                                    className={`px-4 py-2 border-b ${subTopicEdit?.id === topic.id ? "bg-gray-200" : "bg-white"
+                                        }`}
+                                >
+                                    {topic.id}
                                 </td>
-                                <td style={{ background: subTopicEdit?.id === topic.id ? "grey" : "white" }}>{topic.mainTopicName}</td>
-                                <td style={{ background: subTopicEdit?.id === topic.id ? "grey" : "white" }}>
-                                    {topic.wordCount}
+                                <td
+                                    className={`px-4 py-2 border-b ${subTopicEdit?.id === topic.id ? "bg-gray-200" : "bg-white"
+                                        }`}
+                                >
+                                    {topic.name}
                                 </td>
-                                <td style={{ background: subTopicEdit?.id === topic.id ? "grey" : "white" }}>
-                                    {new Date(topic.createdAt).toLocaleDateString()}
+                                <td className="px-4 py-2 border-b">
+                                    {topic.blobName && (
+                                        <img
+                                            src={baseUrlBlob + topic.blobName}
+                                            alt={topic.name}
+                                            className="w-12 h-12 cursor-pointer rounded"
+                                            onClick={() => handleImageClick(baseUrlBlob + topic.blobName)}
+                                        />
+                                    )}
                                 </td>
-                                <td style={{ background: subTopicEdit?.id === topic.id ? "grey" : "white" }}>
-                                    {new Date(topic.updatedAt).toLocaleDateString()}
-                                </td>
-                                <td>
-                                    {subTopicEdit?.id !== topic.id && (
+                                <td className="px-4 py-2 border-b">{topic.mainTopicName}</td>
+                                <td className="px-4 py-2 border-b">{topic.wordCount}</td>
+                                <td className="px-4 py-2 border-b">{new Date(topic.createdAt).toLocaleDateString()}</td>
+                                <td className="px-4 py-2 border-b">{new Date(topic.updatedAt).toLocaleDateString()}</td>
+                                <td className="px-4 py-2 border-b flex items-center space-x-2">
+                                    {subTopicEdit?.id !== topic.id ? (
                                         <button
-                                            className="btn btn-sm btn-secondary me-2"
+                                            className="px-2 py-1 text-sm text-blue-600 bg-gray-200 rounded hover:bg-gray-300"
                                             onClick={() => setSubTopicEdit(topic)}
                                         >
-                                            Edit <i className="fa-solid fa-pen-to-square"></i>
+                                            Edit <i className="fa-solid fa-pen-to-square ml-1"></i>
                                         </button>
-                                    )}
-                                    {subTopicEdit?.id === topic.id && (
+                                    ) : (
                                         <button
-                                            className="btn btn-sm btn-warning me-2"
+                                            className="px-2 py-1 text-sm text-yellow-600 bg-yellow-200 rounded hover:bg-yellow-300"
                                             onClick={() => setSubTopicEdit(null)}
                                         >
                                             Cancel
                                         </button>
                                     )}
                                     <button
-                                        className="btn btn-sm btn-danger"
+                                        className="px-2 py-1 text-sm text-red-600 bg-red-200 rounded hover:bg-red-300"
                                         onClick={() => {
                                             setShowModal(true);
                                             setSubTopicId(topic.id);
@@ -100,12 +111,19 @@ export const SubTopicManagerTable: React.FC<TableSubTopicProps> = ({
                                     >
                                         Delete
                                     </button>
+                                    <a
+                                        href="#"
+                                        className="text-blue-600 hover:underline"
+                                        onClick={() => handleClickExtractMore(topic.id)}
+                                    >
+                                        <i className="fa-solid fa-arrow-up-right-from-square"></i>
+                                    </a>
                                 </td>
                             </tr>
                         ))
                     ) : (
                         <tr>
-                            <td colSpan={8} className="text-center">
+                            <td colSpan={8} className="px-4 py-2 text-center text-gray-500">
                                 No topics yet
                             </td>
                         </tr>
@@ -113,7 +131,14 @@ export const SubTopicManagerTable: React.FC<TableSubTopicProps> = ({
                 </tbody>
             </table>
 
-            {subTopics.length > 0 && <Paging page={page} setPage={setPage} pageResponse={pageResponse} />}            {/* Modal xác nhận xóa */}
+            {/* Pagination */}
+            {subTopics.length > 0 && (
+                <div className="mt-4">
+                    <Paging page={page} setPage={setPage} pageResponse={pageResponse} />
+                </div>
+            )}
+
+            {/* Modal xác nhận xóa */}
             <ConfirmationModal
                 title="Confirm"
                 message="Are you sure you want to delete this topic? This action will delete all objects that depend on this topic."
@@ -127,40 +152,28 @@ export const SubTopicManagerTable: React.FC<TableSubTopicProps> = ({
                 }}
                 onCancel={() => setShowModal(false)}
             />
-            {subTopics.length > 0 && <PageSize
-                size={context.size}
-                handlePageSizeChange={context.handleChangePageSize}
-            />}
+
+            {/* Điều chỉnh số lượng hiển thị */}
+            {subTopics.length > 0 && (
+                <div className="mt-4">
+                    <PageSize size={context.size} handlePageSizeChange={context.handleChangePageSize} />
+                </div>
+            )}
+
             {/* Modal hiển thị ảnh */}
             {selectedImage && (
                 <div
-                    className="modal"
-                    style={{
-                        display: "block",
-                        background: "rgba(0, 0, 0, 0.8)",
-                        position: "fixed",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        zIndex: 1050,
-                        justifyContent: "center",
-                        alignItems: "center",
-                    }}
-                    onClick={() => setSelectedImage(null)} // Đóng modal khi click bên ngoài
+                    className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50"
+                    onClick={() => setSelectedImage(null)}
                 >
                     <img
                         src={selectedImage}
                         alt="Zoomed"
-                        style={{
-                            maxWidth: "90%",
-                            maxHeight: "90%",
-                            margin: "auto",
-                            display: "block",
-                        }}
+                        className="max-w-3/4 max-h-3/4 rounded shadow-lg"
                     />
                 </div>
             )}
         </div>
     );
+
 };

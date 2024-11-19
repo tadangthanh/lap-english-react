@@ -14,11 +14,14 @@ import { DataContext } from '../context/DataContext';
 import ConfirmationModal from "../common/ConfirmationModal";
 import { getSubTopicById } from "../../api/subtopic/SubTopicApi";
 import { SubTopic } from "../../modal/SubTopic";
+import '../css/common.css';
 
-interface WordPageDetailProps { }
+interface WordPageDetailProps {
+    subTopicId?: string;
+}
 
-export const WordPageDetail: React.FC<WordPageDetailProps> = () => {
-    const { subTopicId } = useParams<{ subTopicId: string }>(); // Lấy tham số id từ URL
+export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) => {
+    // const { subTopicId } = useParams<{ subTopicId: string }>(); // Lấy tham số id từ URL
     const navigate = useNavigate(); // Sử dụng để điều hướng "Quay lại"
     const [words, setWords] = useState<Word[]>([]);
     const [page, setPage] = useState(0);
@@ -161,7 +164,6 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = () => {
                 toast.success(response.message, { containerId: 'word' });
                 setWords((prev) => [...prev, response.data]);
                 clearForm();
-                setIsShowForm(false);
                 handleImageDelete();
                 setPage(0);
             } else {
@@ -220,246 +222,219 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = () => {
     }
     return (
         <DataContext.Provider value={{ size, handleChangePageSize }}>
-            <div className="container mt-4">
+            <div className="container mx-auto mt-4 p-4">
                 <Loading loading={isLoading} />
-                <ToastContainer containerId='word' />
-                <div className="d-flex align-items-center mb-5">
-                    <button
-                        className="btn btn-secondary me-3"
-                        onClick={() => navigate(-1)} // Quay lại trang trước đó
-                    >
-                        <i className="fas fa-arrow-left me-2"></i>Back
-                    </button>
-                    <div style={{ margin: "auto" }}> <h1 className="">{subTopic?.name}</h1></div>
-                </div>
+                <ToastContainer containerId="word" />
 
                 {/* Nút Add New Word */}
-                {!isShowForm && <button
-                    ref={buttonFormRef}
-                    onClick={() => setIsShowForm(true)}
-                    className="btn btn-primary mb-3"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#addWordForm"
-                    aria-expanded="false"
-                    aria-controls="addWordForm"
-                >
-                    Add New Word <i className="fas fa-plus ms-2"></i>
-                </button>}
+                {!isShowForm && (
+                    <button
+                        ref={buttonFormRef}
+                        onClick={() => setIsShowForm(true)}
+                        className="mb-3 bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600"
+                    >
+                        Add New Word <i className="fas fa-plus ml-2"></i>
+                    </button>
+                )}
 
                 {/* Form Add New Word */}
-                <div className="collapse" id="addWordForm">
-                    <form>
-                        <div className="row">
-                            {/* Cột 1 */}
-                            <div className="col-md-6">
-                                {/* Từ vựng */}
-                                <div className="mb-3">
-                                    <label htmlFor="word" className="form-label">
-                                        Word
-                                    </label>
-                                    <input
-                                        type="text"
-                                        onChange={(e) => setWord(e.target.value)}
-                                        value={word}
-                                        className="form-control"
-                                        id="word"
-                                        placeholder="Enter word"
-                                    />
-                                </div>
-
-                                {/* Nghĩa */}
-                                <div className="mb-3">
-                                    <label htmlFor="meaning" className="form-label">
-                                        Meaning
-                                    </label>
-                                    <input
-                                        onChange={(e) => setMeaning(e.target.value)}
-                                        value={meaning}
-                                        type="text"
-                                        className="form-control"
-                                        id="meaning"
-                                        placeholder="Enter meaning"
-                                    />
-                                </div>
-
-                                {/* Phát âm UK */}
-                                <div className="mb-3">
-                                    <label htmlFor="pronounceUK" className="form-label">
-                                        Pronunciation (UK)
-                                    </label>
-                                    <input
-                                        value={pronounceUK}
-                                        onChange={(e) => setPronounceUK(e.target.value)}
-                                        type="text"
-                                        className="form-control"
-                                        id="pronounceUK"
-                                        placeholder="Enter UK pronunciation"
-                                    />
-                                </div>
-
-                                {/* Phát âm US */}
-                                <div className="mb-3">
-                                    <label htmlFor="pronounceUS" className="form-label">
-                                        Pronunciation (US)
-                                    </label>
-                                    <input
-                                        value={pronounceUS}
-                                        onChange={(e) => setPronounceUS(e.target.value)}
-                                        type="text"
-                                        className="form-control"
-                                        id="pronounceUS"
-                                        placeholder="Enter US pronunciation"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Cột 2 */}
-                            <div className="col-md-6">
-                                {/* Loại từ (Enum: WordType) */}
-                                <div className="mb-3">
-                                    <label htmlFor="type" className="form-label">
-                                        Type
-                                    </label>
-                                    <select
-                                        className="form-select"
-                                        id="type"
-                                        value={type} // Đặt giá trị hiện tại
-                                        onChange={(e) => setType(WordType[e.target.value as keyof typeof WordType])} // Cập nhật giá trị
-                                    >
-                                        {Object.keys(WordType)
-                                            .filter((key) => isNaN(Number(key))) // Lọc ra tên enum
-                                            .map((key) => (
-                                                <option key={key} value={key}>
-                                                    {key.charAt(0).toUpperCase() + key.slice(1).toLowerCase()}
-                                                </option>
-                                            ))}
-                                    </select>
-                                </div>
-
-                                {/* Trình độ (Enum: WordLevel) */}
-                                <div className="mb-3">
-                                    <label htmlFor="level" className="form-label">
-                                        Level
-                                    </label>
-                                    <select className="form-select" id="level"
-                                        value={level} // Đặt giá trị hiện tại
-                                        onChange={(e) => setLevel(WordLevel[e.target.value as keyof typeof WordLevel])} // Cập nhật giá trị
-                                    >
-                                        {Object.keys(WordLevel)
-                                            .filter((key) => isNaN(Number(key))) // Lọc ra tên enum
-                                            .map((key) => (
-                                                <option key={key} value={key}>
-                                                    {key.toUpperCase()}
-                                                </option>
-                                            ))}
-                                    </select>
-                                </div>
-
-                                {/* Ví dụ */}
-                                <div className="mb-3">
-                                    <label htmlFor="example" className="form-label">
-                                        Example
-                                    </label>
-                                    <textarea
-                                        value={example}
-                                        onChange={(e) => setExample(e.target.value)}
-                                        className="form-control"
-                                        id="example"
-                                        rows={3}
-                                        placeholder="Enter example sentence"
-                                    ></textarea>
-                                </div>
-
-                                {/* Ảnh minh họa */}
-                                <div className="mb-3">
-                                    <label htmlFor="imageBlobName" className="form-label">
-                                        Upload Image
-                                    </label>
-                                    <input
-                                        type="file"
-                                        onChange={handleImageChange}
-                                        ref={fileInputRef}
-                                        className="form-control"
-                                        id="imageBlobName"
-                                        accept="image/*"
-                                    />
-                                </div>
-                                {/* Hiển thị ảnh xem trước nếu có */}
-                                {imagePreview && (
-                                    <div className="mt-3 position-relative" style={{ width: "200px" }}>
-                                        <label className="form-label">Image preview:</label>
-                                        <img
-                                            src={imagePreview}
-                                            alt="Preview"
-                                            className="img-thumbnail"
-                                            style={{ maxWidth: '100%', height: 'auto' }}
+                {isShowForm && (
+                    <div className="border rounded shadow p-4">
+                        <form>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {/* Cột 1 */}
+                                <div>
+                                    <div className="mb-3">
+                                        <label htmlFor="word" className="block text-sm font-medium text-gray-700">
+                                            Word
+                                        </label>
+                                        <input
+                                            type="text"
+                                            onChange={(e) => setWord(e.target.value)}
+                                            value={word}
+                                            className="mt-1 block w-full border border-gray-300 rounded p-2 focus:ring-blue-500 focus:border-blue-500"
+                                            id="word"
+                                            placeholder="Enter word"
                                         />
-                                        <button
-                                            type="button"
-                                            className="btn btn-danger position-absolute top-0 end-0 m-2"
-                                            onClick={handleImageDelete}
-                                            style={{
-                                                width: '30px',
-                                                height: '30px',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                            }}
-                                        >
-                                            <i className="fas fa-trash"></i>
-                                        </button>
                                     </div>
-                                )}
+                                    <div className="mb-3">
+                                        <label htmlFor="meaning" className="block text-sm font-medium text-gray-700">
+                                            Meaning
+                                        </label>
+                                        <input
+                                            onChange={(e) => setMeaning(e.target.value)}
+                                            value={meaning}
+                                            type="text"
+                                            className="mt-1 block w-full border border-gray-300 rounded p-2 focus:ring-blue-500 focus:border-blue-500"
+                                            id="meaning"
+                                            placeholder="Enter meaning"
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="pronounceUK" className="block text-sm font-medium text-gray-700">
+                                            Pronunciation (UK)
+                                        </label>
+                                        <input
+                                            value={pronounceUK}
+                                            onChange={(e) => setPronounceUK(e.target.value)}
+                                            type="text"
+                                            className="mt-1 block w-full border border-gray-300 rounded p-2 focus:ring-blue-500 focus:border-blue-500"
+                                            id="pronounceUK"
+                                            placeholder="Enter UK pronunciation"
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="pronounceUS" className="block text-sm font-medium text-gray-700">
+                                            Pronunciation (US)
+                                        </label>
+                                        <input
+                                            value={pronounceUS}
+                                            onChange={(e) => setPronounceUS(e.target.value)}
+                                            type="text"
+                                            className="mt-1 block w-full border border-gray-300 rounded p-2 focus:ring-blue-500 focus:border-blue-500"
+                                            id="pronounceUS"
+                                            placeholder="Enter US pronunciation"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Cột 2 */}
+                                <div>
+                                    <div className="mb-3">
+                                        <label htmlFor="type" className="block text-sm font-medium text-gray-700">
+                                            Type
+                                        </label>
+                                        <select
+                                            className="mt-1 block w-full border border-gray-300 rounded p-2 focus:ring-blue-500 focus:border-blue-500"
+                                            id="type"
+                                            value={type}
+                                            onChange={(e) => setType(WordType[e.target.value as keyof typeof WordType])}
+                                        >
+                                            {Object.keys(WordType)
+                                                .filter((key) => isNaN(Number(key)))
+                                                .map((key) => (
+                                                    <option key={key} value={key}>
+                                                        {key.charAt(0).toUpperCase() + key.slice(1).toLowerCase()}
+                                                    </option>
+                                                ))}
+                                        </select>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="level" className="block text-sm font-medium text-gray-700">
+                                            Level
+                                        </label>
+                                        <select
+                                            className="mt-1 block w-full border border-gray-300 rounded p-2 focus:ring-blue-500 focus:border-blue-500"
+                                            id="level"
+                                            value={level}
+                                            onChange={(e) => setLevel(WordLevel[e.target.value as keyof typeof WordLevel])}
+                                        >
+                                            {Object.keys(WordLevel)
+                                                .filter((key) => isNaN(Number(key)))
+                                                .map((key) => (
+                                                    <option key={key} value={key}>
+                                                        {key.toUpperCase()}
+                                                    </option>
+                                                ))}
+                                        </select>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="example" className="block text-sm font-medium text-gray-700">
+                                            Example
+                                        </label>
+                                        <textarea
+                                            value={example}
+                                            onChange={(e) => setExample(e.target.value)}
+                                            className="mt-1 block w-full border border-gray-300 rounded p-2 focus:ring-blue-500 focus:border-blue-500"
+                                            id="example"
+                                            rows={3}
+                                            placeholder="Enter example sentence"
+                                        ></textarea>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="imageBlobName" className="block text-sm font-medium text-gray-700">
+                                            Upload Image
+                                        </label>
+                                        <input
+                                            type="file"
+                                            onChange={handleImageChange}
+                                            ref={fileInputRef}
+                                            className="mt-1 block w-full border border-gray-300 rounded p-2 focus:ring-blue-500 focus:border-blue-500"
+                                            id="imageBlobName"
+                                            accept="image/*"
+                                        />
+                                    </div>
+                                    {imagePreview && (
+                                        <div className="relative mt-3 w-48">
+                                            <label className="block text-sm font-medium text-gray-700">Image preview:</label>
+                                            <img
+                                                src={imagePreview}
+                                                alt="Preview"
+                                                className="rounded shadow"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={handleImageDelete}
+                                                className="absolute top-0 right-0 bg-red-500 text-white p-2 rounded-full"
+                                            >
+                                                <i className="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                        </div>
 
-                        {/* Nút submit */}
-                        <div className="mt-4">
-                            <button type="submit" className="btn btn-success" onClick={(e: any) => handleAddWord(e)}>
-                                Save Word
-                            </button>
-                            {/* Nút Add New Word */}
-                            <button
-                                onClick={() => {
-                                    clearForm();
-                                    setIsShowForm(false);
-                                }}
-                                className="btn btn-secondary ms-2"
-                                type="button"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#addWordForm"
-                                aria-expanded="false"
-                                aria-controls="addWordForm"
-                            >
-                                Close
-                            </button>
-                        </div>
-                    </form>
-                </div>
-                <div className='d-flex align-items-center'>
-                    {/* Sắp xếp theo vần A-Z */}
-                    <div className='me-2'>
-                        <select className="form-select" onChange={handleChangeSort}>
-                            <option value="asc" >Sort</option>
-                            <option value="asc">a-z</option>
-                            <option value="desc">z-a</option>
-                        </select>
+                            {/* Nút Submit */}
+                            <div className="mt-4 flex space-x-4">
+                                <button
+                                    type="submit"
+                                    className="bg-green-500 text-white px-4 py-2 rounded shadow hover:bg-green-600"
+                                    onClick={(e: any) => handleAddWord(e)}
+                                >
+                                    Save Word
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        clearForm();
+                                        setIsShowForm(false);
+                                    }}
+                                    className="bg-gray-500 text-white px-4 py-2 rounded shadow hover:bg-gray-600"
+                                    type="button"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                    <div>
-                        <div className="flex items-center">
-                            <input
-                                value={searchValue}
-                                type="text"
-                                placeholder="word"
-                                className="p-2 border border-gray-300 rounded mr-2 me-2"
-                                onChange={handleInputSearchChange}
-                            />
-                            <button className="p-2 bg-blue text-black rounded" onClick={handleSearchByName}>Search</button>
-                        </div>
+                )}
 
+                {/* Sắp xếp và tìm kiếm */}
+                <div className="flex items-center mt-4 space-x-4">
+                    <select
+                        className="p-2 border rounded"
+                        onChange={handleChangeSort}
+                    >
+                        <option value="asc">Sort</option>
+                        <option value="asc">A-Z</option>
+                        <option value="desc">Z-A</option>
+                    </select>
+                    <div className="flex items-center">
+                        <input
+                            value={searchValue}
+                            type="text"
+                            placeholder="Search word"
+                            className="p-2 border rounded mr-2"
+                            onChange={handleInputSearchChange}
+                        />
+                        <button
+                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                            onClick={handleSearchByName}
+                        >
+                            Search
+                        </button>
                     </div>
                 </div>
+
                 <WordManagerTable
                     words={words}
                     handleDeleteWord={handleDeleteWord}
@@ -467,23 +442,25 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = () => {
                     setPage={setPage}
                     pageResponse={pageResponse}
                 />
+
+                {/* Modal xác nhận xóa */}
+                <ConfirmationModal
+                    title="Confirm"
+                    message="This will replace the current image. Are you sure you want to continue?"
+                    labelConfirm="Continue"
+                    labelCancel="Cancel"
+                    colorConfirm="green"
+                    show={showModal}
+                    onConfirm={() => {
+                        setShowModal(false);
+                    }}
+                    onCancel={() => {
+                        setShowModal(false);
+                        handleClearImageInput();
+                    }}
+                />
             </div>
-            {/* Modal xác nhận xóa */}
-            <ConfirmationModal
-                title="Confirm"
-                message="This will replace the current image. Are you sure you want to continue?"
-                labelConfirm="Continue"
-                labelCancel="Cancel"
-                colorConfirm="green"
-                show={showModal}
-                onConfirm={() => {
-                    setShowModal(false);
-                }}
-                onCancel={() => {
-                    setShowModal(false);
-                    handleClearImageInput();
-                }}
-            />
         </DataContext.Provider>
     );
+
 };

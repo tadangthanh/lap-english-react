@@ -13,7 +13,7 @@ import { baseUrlBlob, verifyToken } from "../../api/ApiUtils";
 import { Loading } from "../common/LoadingSpinner";
 import ConfirmationModal from "../common/ConfirmationModal";
 import { SearchOperation } from "../../modal/SearchOperation";
-
+import '../css/common.css';
 
 export const SubTopicPageManager: React.FC = () => {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -229,35 +229,43 @@ export const SubTopicPageManager: React.FC = () => {
         }
         setSearchValue(e.target.value);
     }
+    const [isShowForm, setIsShowForm] = useState(false);
+    const buttonFormRef = useRef<HTMLButtonElement | null>(null);
+    const clearForm = () => {
+        setSubTopicName('');
+        setMainTopicIdSelected(-1);
+        setSubTopicEdit(null);
+        handleClearImageInput();
+    }
     return (
         <DataContext.Provider value={{ size, handleChangePageSize }}>
-            <div className="mb-4 mt-5" >
+            <div className="mb-4 mt-5 transition-transform transform scale-100">
                 <Loading loading={isLoading} />
-                <ToastContainer containerId='sub-topic' />
-                <h5>Sub Topic</h5>
-                <div className=" p-3 mb-3">
-                    <div className="row align-items-center">
-                        <div className="col-md-6">
-                            <label htmlFor="subTopicName" className="form-label">
-                                Topic name <span style={{ color: "red" }}>*</span>
+                <ToastContainer containerId="sub-topic" />
+                <h5 className="text-lg font-semibold mb-4">Sub Topic</h5>
+                {isShowForm ? <div className="p-4 bg-white shadow-md rounded mb-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Cột bên trái */}
+                        <div>
+                            <label htmlFor="subTopicName" className="block text-sm font-medium text-gray-700 mb-1">
+                                Topic name <span className="text-red-500">*</span>
                             </label>
-
                             <input
                                 type="text"
                                 id="subTopicName"
-                                className="form-control mb-2"
+                                className="block w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500 mb-4"
                                 placeholder="Enter sub topic name"
                                 value={subTopicName}
                                 onChange={(e) => setSubTopicName(e.target.value)}
                             />
 
-                            <label htmlFor="subTopicImage" className="form-label">
+                            <label htmlFor="subTopicImage" className="block text-sm font-medium text-gray-700 mb-1">
                                 Image preview
                             </label>
                             <input
                                 type="file"
                                 id="subTopicImage"
-                                className="form-control mb-2"
+                                className="block w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500 mb-4"
                                 accept="image/*"
                                 onChange={handleImageChange}
                                 ref={fileInputRef}
@@ -265,80 +273,109 @@ export const SubTopicPageManager: React.FC = () => {
 
                             {/* Hiển thị ảnh xem trước nếu có */}
                             {imagePreview && (
-                                <div className="mt-3 position-relative" style={{ width: "200px" }}>
-                                    <label className="form-label">Image preview:</label>
+                                <div className="relative mt-4 w-48">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Image preview:</label>
                                     <img
                                         src={imagePreview}
                                         alt="Preview"
-                                        className="img-thumbnail"
-                                        style={{ maxWidth: '100%', height: 'auto' }}
+                                        className="w-full h-auto rounded shadow-md"
                                     />
                                     <button
                                         type="button"
-                                        className="btn btn-danger position-absolute top-0 end-0 m-2"
+                                        className="absolute top-0 right-0 bg-red-500 text-white p-2 rounded-full hover:bg-red-600"
                                         onClick={handleImageDelete}
-                                        style={{
-                                            width: '30px',
-                                            height: '30px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                        }}
                                     >
                                         <i className="fas fa-trash"></i>
                                     </button>
                                 </div>
                             )}
-                            <div className="col-md-6">
-                                <MainTopicSelect handleSelectMainTopic={handleSelectMainTopic} mainTopics={mainTopics}
-                                    isRequired={true}
-                                    idMainTopicSelected={mainTopicIdSelected}
-                                />
-                                <div className="d-flex mt-3">
-                                    {subTopicEdit ? <button className="btn btn-secondary" onClick={handleUpdateSubTopic}>
-                                        Update
-                                    </button> : <button className="btn btn-success" onClick={handleAddSubTopic}>
-                                        Add
-                                    </button>}
-                                </div>
-                            </div>
+                        </div>
+
+                        {/* Cột bên phải */}
+                        <div>
+                            <MainTopicSelect
+                                handleSelectMainTopic={handleSelectMainTopic}
+                                mainTopics={mainTopics}
+                                isRequired={true}
+                                idMainTopicSelected={mainTopicIdSelected}
+                            />
 
                         </div>
-                        <div className='d-flex align-items-center'>
-                            {/* Sắp xếp theo vần A-Z */}
-                            <div className='me-2'>
-                                <select className="form-select" onChange={handleChangeSort}>
-                                    <option >Sort</option>
-                                    <option value="asc">a-z</option>
-                                    <option value="desc">z-a</option>
-                                </select>
-                            </div>
-                            <div>
-                                <div className="flex items-center">
-                                    <input
-                                        value={searchValue}
-                                        type="text"
-                                        placeholder="Topic name"
-                                        className="p-2 border border-gray-300 rounded mr-2 me-2"
-                                        onChange={handleInputSearchChange}
-                                    />
-                                    <button className="p-2 bg-blue text-black rounded" onClick={handleSearchByName}>Search</button>
-                                </div>
+                    </div>
+                    <div className="flex mt-4">
+                        {subTopicEdit ? (
+                            <button
+                                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                                onClick={handleUpdateSubTopic}
+                            >
+                                Update
+                            </button>
+                        ) : (
+                            <button
+                                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                                onClick={handleAddSubTopic}
+                            >
+                                Add
+                            </button>
+                        )}
+                        <button
+                            onClick={() => {
+                                clearForm();
+                                setIsShowForm(false);
+                            }}
+                            className="bg-gray-500 ms-2 text-white px-4 py-2 rounded hover:bg-gray-600"
+                            type="button"
+                        >
+                            Close
+                        </button>
+                    </div>
 
-                            </div>
-                        </div>
-                        <SubTopicManagerTable
-                            subTopics={subTopics}
-                            handleDeleteSubTopic={handleDeleteSubTopic}
-                            setSubTopicEdit={setSubTopicEdit}
-                            subTopicEdit={subTopicEdit}
-                            page={page}
-                            setPage={setPage}
-                            pageResponse={pageResponse}
+                </div> : <button
+                    ref={buttonFormRef}
+                    onClick={() => setIsShowForm(true)}
+                    className="mb-3 bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600"
+                >
+                    Add New SubTopic <i className="fas fa-plus ml-2"></i>
+                </button>}
+
+                {/* Bộ lọc và tìm kiếm */}
+                <div className="flex items-center mb-4">
+                    <select
+                        className="p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500 mr-4"
+                        onChange={handleChangeSort}
+                    >
+                        <option value="asc">Sort</option>
+                        <option value="asc">a-z</option>
+                        <option value="desc">z-a</option>
+                    </select>
+                    <div className="flex items-center">
+                        <input
+                            value={searchValue}
+                            type="text"
+                            placeholder="Topic name"
+                            className="p-2 border border-gray-300 rounded mr-2"
+                            onChange={handleInputSearchChange}
                         />
-
+                        <button
+                            className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            onClick={handleSearchByName}
+                        >
+                            Search
+                        </button>
                     </div>
                 </div>
+
+                {/* Bảng quản lý sub-topic */}
+                <SubTopicManagerTable
+                    subTopics={subTopics}
+                    handleDeleteSubTopic={handleDeleteSubTopic}
+                    setSubTopicEdit={setSubTopicEdit}
+                    subTopicEdit={subTopicEdit}
+                    page={page}
+                    setPage={setPage}
+                    pageResponse={pageResponse}
+                />
+
                 {/* Modal xác nhận xóa */}
                 <ConfirmationModal
                     title="Warning"
@@ -355,7 +392,8 @@ export const SubTopicPageManager: React.FC = () => {
                         handleClearImageInput();
                     }}
                 />
-            </div >
+            </div>
         </DataContext.Provider>
     );
+
 }

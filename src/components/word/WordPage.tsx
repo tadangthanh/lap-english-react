@@ -7,7 +7,7 @@ import { SubTopic } from '../../modal/SubTopic';
 import { getSubTopicByName, getSubTopicPage } from '../../api/subtopic/SubTopicApi';
 import { Paging } from '../common/Paging';
 import { SearchOperation } from '../../modal/SearchOperation';
-
+import '../css/common.css';
 const WordPage: React.FC = () => {
     const [subTopics, setSubTopics] = useState<SubTopic[]>([]);
     const [page, setPage] = useState<number>(0);
@@ -16,6 +16,7 @@ const WordPage: React.FC = () => {
     const [subTopicSearch, setSubTopicSearch] = useState<string>('');
     const [searchValue, setSearchValue] = useState<string>('');
     const [searchField, setSearchField] = useState<string>('name');
+    const [size, setSize] = useState<number>(24);
     const [searchOperation, setSearchOperation] = useState<SearchOperation>(SearchOperation.LIKE);
     const [pageResponse, setPageResponse] = useState<PageResponse<Word>>({
         pageNo: 0,
@@ -29,7 +30,7 @@ const WordPage: React.FC = () => {
         setSubTopicSearch(searchField + searchOperation + searchValue)
     }, [searchField, searchOperation, searchValue]);
     useEffect(() => {
-        getSubTopicPage(page, 10, sortBy, direction, subTopicSearch).then((response) => {
+        getSubTopicPage(page, size, sortBy, direction, subTopicSearch).then((response) => {
             if (response.status === 200) {
                 setSubTopics(response.data.items);
                 setPageResponse(response.data);
@@ -52,7 +53,7 @@ const WordPage: React.FC = () => {
         navigate(`/word/${subTopicId}`);
     }
     const handleInitPageSubTopic = () => {
-        getSubTopicPage(page, 10, sortBy, direction, '').then((response) => {
+        getSubTopicPage(page, size, sortBy, direction, '').then((response) => {
             if (response.status === 200) {
                 setSubTopics(response.data.items);
                 setPageResponse(response.data);
@@ -65,7 +66,7 @@ const WordPage: React.FC = () => {
     }
     const handleSearchByName = () => {
         setPage(0);
-        getSubTopicPage(page, 10, sortBy, direction, subTopicSearch).then((response) => {
+        getSubTopicPage(page, size, sortBy, direction, subTopicSearch).then((response) => {
             if (response.status === 200) {
                 if (response.data.items.length === 0) {
                     alert(`Không tìm thấy chủ đề với tên ${subTopicSearch}`);
@@ -78,13 +79,13 @@ const WordPage: React.FC = () => {
         });
     }
     return (
-        <div className="p-4">
+        <div className="p-4 zoom-in">
             <h2>Word</h2>
             {subTopics.length > 0 && <div className='d-flex align-items-center'>
                 {/* Sắp xếp theo vần A-Z */}
                 <div className='me-2'>
                     <select className="form-select" onChange={handleChangeSort}>
-                        <option >Sort</option>
+                        <option value="asc" >Sort</option>
                         <option value="asc">a-z</option>
                         <option value="desc">z-a</option>
                     </select>

@@ -8,6 +8,9 @@ import { toast, ToastContainer } from 'react-toastify';
 import { TableMainTopic } from './MainTopicTable';
 import { PageResponse } from '../../modal/PageResponse';
 import { DataContext } from '../context/DataContext';
+import '../css/common.css';
+import { SearchOperation } from '../../modal/SearchOperation';
+
 const MainTopicPage: React.FC = () => {
     const [mainTopics, setMainTopics] = useState<MainTopic[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -16,6 +19,11 @@ const MainTopicPage: React.FC = () => {
     const [page, setPage] = useState<number>(0);
     const [size, setSize] = useState<number>(10);
     const [mainTopicEdit, setMainTopicEdit] = useState<MainTopic | null>(null);
+    const [searchValue, setSearchValue] = useState<string>('');
+    const [mainTopicSearch, setMainTopicSearch] = useState<string>('');
+    const [sortBy, setSortBy] = useState<string>('name');
+    const [searchField, setSearchField] = useState<string>('name');
+    const [searchOperation, setSearchOperation] = useState<SearchOperation>(SearchOperation.LIKE);
     const [pageResponse, setPageResponse] = useState<PageResponse<MainTopic>>({
         pageNo: 0,
         pageSize: 10,
@@ -24,6 +32,10 @@ const MainTopicPage: React.FC = () => {
         totalItems: 0,
         items: []
     });
+    const [direction, setDirection] = useState<string>('asc');
+    useEffect(() => {
+        setMainTopicSearch(searchField + searchOperation + searchValue)
+    }, [searchField, searchOperation, searchValue]);
     const navigate = useNavigate();
     useEffect(() => {
         setIsLoading(false);
@@ -37,7 +49,7 @@ const MainTopicPage: React.FC = () => {
     }, []);
     useEffect(() => {
         setMainTopicEdit(null);
-        getMainTopicPage(page, size).then((response: any) => {
+        getMainTopicPage(page, size, sortBy, direction, mainTopicSearch).then((response: any) => {
             if (response.status === 200) {
                 setMainTopics(response.data.items);
                 setPageResponse(response.data);
@@ -47,7 +59,7 @@ const MainTopicPage: React.FC = () => {
         }).catch((error) => {
             toast.error(error.message, { containerId: 'page-main-topic' });
         });
-    }, [page, size]);
+    }, [page, size, direction]);
 
     useEffect(() => {
         inputMainTopicName?.current?.focus();
@@ -133,47 +145,130 @@ const MainTopicPage: React.FC = () => {
         setSize(size);
         setPage(0);
     }
+    const handleChangeSort = (e: any) => {
+        setDirection(e.target.value);
+        setPage(0);
+    }
+    const handleInitPageMainTopic = () => {
+        getMainTopicPage(0, size, sortBy, direction).then((response: any) => {
+            if (response.status === 200) {
+                setMainTopics(response.data.items);
+                setPageResponse(response.data);
+            } else {
+                toast.error(response.message, { containerId: 'page-main-topic' });
+            }
+        }).catch((error) => {
+            toast.error(error.message, { containerId: 'page-main-topic' });
+        });
+    }
+    const handleInputSearchChange = (e: any) => {
+        if (e.target.value === '') {
+            setSearchValue('');
+            setPage(0);
+            handleInitPageMainTopic();
+            return;
+        }
+        setSearchValue(e.target.value);
+    }
+    const handleSearchByName = () => {
+        setPage(0);
+        getMainTopicPage(page, 10, sortBy, direction, mainTopicSearch).then((response) => {
+            if (response.status === 200) {
+                if (response.data.items.length === 0) {
+                    alert(`Not found topic with name ${mainTopicSearch}`);
+                    setSearchValue('');
+                    return;
+                }
+                setMainTopics(response.data.items);
+                setPageResponse(response.data);
+            }
+        });
+    }
     return (
         <DataContext.Provider value={{ size, handleChangePageSize }}>
-            <div className="p-4">
-                <h2>Main topic</h2>
+            <div className="p-4 transform transition-transform scale-100">
+                <h2 className="text-2xl font-bold mb-4">Main Topic</h2>
                 <Loading loading={isLoading} />
-                <ToastContainer containerId='page-main-topic' />
+                <ToastContainer containerId="page-main-topic" />
+
                 {/* Form nhập thông tin Chủ đề chính */}
-                <div className="mb-4 col-md-6">
-                    <label htmlFor="mainTopicName" className="form-label">
+                <div className="mb-4 max-w-lg">
+                    <label
+                        htmlFor="mainTopicName"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                    >
                         Main Topic name
                     </label>
                     <input
                         ref={inputMainTopicName}
                         type="text"
                         id="mainTopicName"
-                        className="form-control mb-2"
+                        className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500 mb-2"
                         placeholder="Enter main topic name"
                         value={mainTopicName}
                         onKeyDown={handleKeyDown}
                         onChange={(e) => {
                             setMainTopicName(e.target.value);
-                            setError('');
+                            setError("");
                         }}
                     />
-                    <div className='text-danger mb-2'>{error}</div>
-                    {!mainTopicEdit && <button className="btn btn-primary" onClick={handleAddMainTopic}>
-                        Add
-                    </button>}
-                    {mainTopicEdit && <button className="btn btn-secondary" onClick={handleUpdateMainTopic}>
-                        Update
-                    </button>}
+                    {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
+                    {!mainTopicEdit ? (
+                        <button
+                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            onClick={handleAddMainTopic}
+                        >
+                            Add
+                        </button>
+                    ) : (
+                        <button
+                            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                            onClick={handleUpdateMainTopic}
+                        >
+                            Update
+                        </button>
+                    )}
                 </div>
-                <TableMainTopic mainTopics={mainTopics} pageResponse={pageResponse} setMainTopicEdit={setMainTopicEdit}
+                {/* Bộ lọc và tìm kiếm */}
+                <div className="flex items-center mb-4">
+                    <select
+                        className="p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500 mr-4"
+                        onChange={handleChangeSort}
+                    >
+                        <option value="asc">Sort</option>
+                        <option value="asc">a-z</option>
+                        <option value="desc">z-a</option>
+                    </select>
+                    <div className="flex items-center">
+                        <input
+                            value={searchValue}
+                            type="text"
+                            placeholder="Topic name"
+                            className="p-2 border border-gray-300 rounded mr-2"
+                            onChange={handleInputSearchChange}
+                        />
+                        <button
+                            className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            onClick={handleSearchByName}
+                        >
+                            Search
+                        </button>
+                    </div>
+                </div>
+                {/* Bảng hiển thị danh sách Chủ đề chính */}
+                <TableMainTopic
+                    mainTopics={mainTopics}
+                    pageResponse={pageResponse}
+                    setMainTopicEdit={setMainTopicEdit}
                     mainTopicEdit={mainTopicEdit}
                     handleDeleteMainTopic={handleDeleteMainTopic}
-                    page={page} setPage={setPage}
+                    page={page}
+                    setPage={setPage}
                 />
-
             </div>
         </DataContext.Provider>
     );
+
 };
 
 export default MainTopicPage;

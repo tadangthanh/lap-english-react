@@ -1,8 +1,8 @@
 import { MainTopic } from "../../modal/MainTopic";
 import { apiUrl, del, get, post, put } from "../ApiUtils";
 
-export const getMainTopicPage = async (page = 0, size = 10) => {
-    return await get(`${apiUrl}/main-topic?page=${page}&size=${size}`);
+export const getMainTopicPage = async (page = 0, size = 10, sortBy?: String, direction?: String, maintopic?: String) => {
+    return await get(`${apiUrl}/main-topic?page=${page}&size=${size}&sort=${sortBy ?? ''},${direction ?? ''}&maintopic=${maintopic}`);
 }
 export const getAllMainTopic = async () => {
     return await get(`${apiUrl}/main-topic/list`);

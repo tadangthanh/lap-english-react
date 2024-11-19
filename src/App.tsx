@@ -6,7 +6,7 @@ import WordPage from './components/word/WordPage';
 import Login from './components/LoginPage';
 import MainTopicPage from './components/topic/MainTopicPage';
 import { SubTopicPageManager } from './components/topic/SubTopicPageManager';
-import { WordPageDetail } from './components/word/WordPageDetail';
+import HeaderWithTabs from './components/tab/HeaderWithTabs';
 
 const AppLayout: React.FC = () => {
   const location = useLocation();
@@ -28,7 +28,7 @@ const AppLayout: React.FC = () => {
               <Route path="/" element={<h2>Home</h2>} />
               <Route path="/word" element={<WordPage />} />
               <Route path="/topic" element={<MainTopicPage />} />
-              <Route path="/word/:subTopicId" element={<WordPageDetail />} />
+              <Route path="/sub-topic/:subTopicId" element={<HeaderWithTabs />} />
               {/* Thêm các route khác ở đây */}
               <Route path="/sub-topic" element={<SubTopicPageManager />} />
             </Routes>
