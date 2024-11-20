@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Sentence } from "../../modal/Sentence";
 import { PageResponse } from "../../modal/PageResponse";
 import { SentenceManagerTable } from "./SentenceManagerTable";
-import { createSentence, deleteSentence, getSentencePage, updateSentence } from "../../api/sentence/SentenceApi";
+import { createSentence, deleteSentence, getSentencePage, importSentenceExcel, updateSentence } from "../../api/sentence/SentenceApi";
 import { Loading } from "../common/LoadingSpinner";
 import { toast, ToastContainer } from "react-toastify";
 import { DataContext } from '../context/DataContext';
 import { SearchOperation } from "../../modal/SearchOperation";
+import ExcelImportComponent from "../common/ExcelImportComponent";
+import { WebSocketContext } from "../websocket/WebSocketProvider";
 interface SentencePageProps {
     subTopicIdParam?: string;
 }
@@ -90,7 +92,6 @@ export const SentencePage: React.FC<SentencePageProps> = ({ subTopicIdParam }) =
         deleteSentence(id).then((response) => {
             if (response.status === 204) {
                 setSentences((pre) => pre.filter((sentence) => sentence.id !== id));
-                toast.success(response.message, { containerId: 'sentence' });
             } else {
                 toast.error(response.message, { containerId: 'sentence' });
             }
@@ -161,7 +162,31 @@ export const SentencePage: React.FC<SentencePageProps> = ({ subTopicIdParam }) =
         clearForm();
         setSentenceEdit(null);
     }
-
+    const [fileImport, setFileImport] = useState<File | null>(null);
+    const instructionalText = `
+        Ensure your Excel file has the following format: <br />
+        <strong>Columns:</strong> Sentence, Translation <br />`;
+    const handleImportSentence = () => {
+        importSentenceExcel(subTopicId, fileImport as File).then((response: any) => {
+            clearForm();
+            if (response.status === 200) {
+                toast.info(response.message, { containerId: 'word' });
+            } else {
+                toast.error(response.message, { containerId: 'word' });
+            }
+        });
+    }
+    const { lastMessage } = useContext(WebSocketContext)!;
+    useEffect(() => {
+        if (lastMessage) {
+            const { status, message } = lastMessage;
+            if (status === 201) {
+                handleInitPageSentence();
+            } else {
+                toast.error(message, { containerId: 'sentence' });
+            }
+        }
+    }, [lastMessage]); // Lắng nghe thay đổi của lastMessage
     return (
         <DataContext.Provider value={{ size, handleChangePageSize }}>
             <div className="container mx-auto mt-4">
@@ -230,9 +255,15 @@ export const SentencePage: React.FC<SentencePageProps> = ({ subTopicIdParam }) =
                                 </button>
                             </div>
                         </form>
+
                     </div>
                 )}
-
+                <ExcelImportComponent
+                    instructionalText={instructionalText}
+                    handleImport={handleImportSentence}
+                    setFileImport={setFileImport}
+                    fileImport={fileImport}
+                />
                 <div className="flex items-center justify-between mt-4">
                     <div className="flex items-center">
                         <select

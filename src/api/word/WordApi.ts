@@ -10,6 +10,6 @@ export const createWord = async (word: Word, file?: File) => {
 export const deleteWord = async (id: number) => {
     return await del(`${apiUrl}/word/${id}`);
 }
-export const importExcel = async (subTopicId: number, file: File) => {
+export const importWordExcel = async (subTopicId: number, file: File) => {
     return await postFormData(`${apiUrl}/word/import/${subTopicId}`, 0, {}, file = file);
 }

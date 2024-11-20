@@ -13,3 +13,6 @@ export const deleteSentence = async (id: number) => {
 export const updateSentence = async (sentence: Sentence) => {
     return await put(`${apiUrl}/sentence/${sentence.id}`, 0, sentence);
 }
+export const importSentenceExcel = async (subTopicId: number, file: File) => {
+    return await postFormData(`${apiUrl}/sentence/import/${subTopicId}`, 0, {}, file = file);
+}
