@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { WordType } from "../../modal/WordType";
 import { WordLevel } from "../../modal/WordLevel";
@@ -7,7 +7,7 @@ import { Word } from "../../modal/Word";
 import { PageResponse } from "../../modal/PageResponse";
 import { SearchOperation } from "../../modal/SearchOperation";
 import { baseUrlBlob, verifyToken } from "../../api/ApiUtils";
-import { createWord, deleteWord, getWordPage } from "../../api/word/WordApi";
+import { createWord, deleteWord, getWordPage, importExcel } from "../../api/word/WordApi";
 import { toast, ToastContainer } from "react-toastify";
 import { Loading } from "../common/LoadingSpinner";
 import { DataContext } from '../context/DataContext';
@@ -15,6 +15,8 @@ import ConfirmationModal from "../common/ConfirmationModal";
 import { getSubTopicById } from "../../api/subtopic/SubTopicApi";
 import { SubTopic } from "../../modal/SubTopic";
 import '../css/common.css';
+import WebSocketService from "../../service/WebSocketService";
+import { WebSocketContext } from "../websocket/WebSocketProvider";
 
 interface WordPageDetailProps {
     subTopicId?: string;
@@ -46,6 +48,8 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
     const [example, setExample] = useState<string>('');
     const [subTopicIdMdl, setSubTopicIdMdl] = useState<number>(0);
     const [subTopic, setSubTopic] = useState<SubTopic | null>(null);
+    const [fileImport, setFileImport] = useState<File | null>(null);
+    const importInputRef = useRef<HTMLInputElement | null>(null);
     useEffect(() => {
         if (subTopicId) {
             setSubTopicIdMdl(parseInt(subTopicId));
@@ -104,7 +108,6 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
     const handleDeleteWord = (id: number) => {
         deleteWord(id).then((response: any) => {
             if (response.status === 204) {
-                toast.success(response.message, { containerId: 'word' });
                 setWords((prev) => prev.filter((word) => word.id !== id));
             } else {
                 toast.error(response.message, { containerId: 'word' });
@@ -154,6 +157,8 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
         setFile(null);
         setImagePreview(null);
         handleClearImageInput();
+        setFileImport(null);
+        importInputRef.current && (importInputRef.current.value = '');
     }
     // xử lý thêm từ mới
     const handleAddWord = (event: React.FormEvent<HTMLFormElement>) => {
@@ -169,7 +174,7 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
             } else {
                 toast.error(response.message, { containerId: 'word' });
             }
-        });
+        })
         clearForm();
     }
     const handleInitPageWord = () => {
@@ -220,6 +225,39 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
         setDirection(e.target.value);
         setPage(0);
     }
+    const handleFileImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files && e.target.files[0];
+        if (file) {
+            setErrorMessage('');
+            setFileImport(file);
+        }
+    }
+    const [errorMessage, setErrorMessage] = useState<string>('');
+    const handleImportWords = () => {
+        if (!fileImport) {
+            setErrorMessage('Please choose a file to import');
+            return;
+        }
+        importExcel(subTopicIdMdl, fileImport as File).then((response: any) => {
+            clearForm();
+            if (response.status === 200) {
+                toast.info(response.message, { containerId: 'word' });
+            } else {
+                toast.error(response.message, { containerId: 'word' });
+            }
+        });
+    }
+    const { lastMessage } = useContext(WebSocketContext)!;
+    useEffect(() => {
+        if (lastMessage) {
+            const { status, message } = lastMessage;
+            if (status === 201) {
+                handleInitPageWord();
+            } else {
+                toast.error(message, { containerId: 'word' });
+            }
+        }
+    }, [lastMessage]); // Lắng nghe thay đổi của lastMessage
     return (
         <DataContext.Provider value={{ size, handleChangePageSize }}>
             <div className="container mx-auto mt-4 p-4">
@@ -236,6 +274,8 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
                         Add New Word <i className="fas fa-plus ml-2"></i>
                     </button>
                 )}
+
+
 
                 {/* Form Add New Word */}
                 {isShowForm && (
@@ -407,6 +447,45 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
                         </form>
                     </div>
                 )}
+                <div className="mt-6 border rounded shadow p-4">
+                    <h2 className="text-lg font-bold mb-3">Import Words from Excel</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                        <div className="flex items-baseline">
+                            <div className="w-full">
+                                <input
+                                    ref={importInputRef}
+                                    type="file"
+                                    accept=".xlsx, .xls"
+                                    onChange={handleFileImport}
+                                    className="p-2 border rounded w-full"
+                                />
+                                {/* Vùng chứa error message với chiều cao cố định */}
+                                <span
+                                    className={`block text-red-600 ms-2 mt-1 transition-opacity duration-300 ${errorMessage ? "opacity-100" : "opacity-0"
+                                        }`}
+                                    style={{ minHeight: "20px" }}
+                                >
+                                    {errorMessage}
+                                </span>
+                            </div>
+                            <button
+                                onClick={handleImportWords}
+                                className="ml-4 bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600"
+                            >
+                                Import
+                            </button>
+                        </div>
+                        <div className="flex items-center text-gray-600">
+                            <i className="fas fa-info-circle text-blue-500 mr-2" title="Click for details"></i>
+                            <p>
+                                Ensure your Excel file has the following format: <br />
+                                <strong>Columns:</strong> Word, Meaning, PronounceUK, PronounceUS, Type, Level, Example <br />
+                                <strong>Type:</strong> One of the following values: NOUN, VERB, ADJECTIVE, ADVERB, PREPOSITION, CONJUNCTION, INTERJECTION, PRONOUN, DETERMINER, EXCLAMATION. <br />
+                                <strong>Level:</strong> One of the following values: A1, A2, B1, B2, C1, C2.
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
                 {/* Sắp xếp và tìm kiếm */}
                 <div className="flex items-center mt-4 space-x-4">

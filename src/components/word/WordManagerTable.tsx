@@ -37,7 +37,7 @@ export const WordManagerTable: React.FC<TableWordProps> = ({
     };
 
     return (
-        <div className="overflow-x-auto mt-4">
+        <div className="overflow-x-auto mt-4 zoom-in">
             <table className="min-w-full bg-white border border-gray-300 rounded shadow">
                 <thead className="bg-gray-100">
                     <tr>
