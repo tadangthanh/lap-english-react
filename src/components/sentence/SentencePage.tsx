@@ -255,15 +255,15 @@ export const SentencePage: React.FC<SentencePageProps> = ({ subTopicIdParam }) =
                                 </button>
                             </div>
                         </form>
-
+                        <ExcelImportComponent
+                            instructionalText={instructionalText}
+                            handleImport={handleImportSentence}
+                            setFileImport={setFileImport}
+                            fileImport={fileImport}
+                        />
                     </div>
                 )}
-                <ExcelImportComponent
-                    instructionalText={instructionalText}
-                    handleImport={handleImportSentence}
-                    setFileImport={setFileImport}
-                    fileImport={fileImport}
-                />
+
                 <div className="flex items-center justify-between mt-4">
                     <div className="flex items-center">
                         <select

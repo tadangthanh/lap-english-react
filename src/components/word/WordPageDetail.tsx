@@ -439,16 +439,17 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
                                 </button>
                             </div>
                         </form>
+                        {/* Import file */}
+                        <ExcelImportComponent
+                            fileImport={fileImport}
+                            setFileImport={setFileImport}
+                            handleImport={handleImportWords}
+                            instructionalText={instructionalText}
+                        />
                     </div>
                 )}
 
-                {/* Import file */}
-                <ExcelImportComponent
-                    fileImport={fileImport}
-                    setFileImport={setFileImport}
-                    handleImport={handleImportWords}
-                    instructionalText={instructionalText}
-                />
+
 
                 {/* Sắp xếp và tìm kiếm */}
                 <div className="flex items-center mt-4 space-x-4">

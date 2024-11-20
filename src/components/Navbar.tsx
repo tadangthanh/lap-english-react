@@ -21,7 +21,7 @@ const AppNavbar: React.FC = () => {
             <ToastContainer containerId="navbar" />
             <div className="container mx-auto px-4 py-3">
                 <a href="#home" className="text-white text-lg font-semibold">
-                    Quản lý
+                    Management
                 </a>
             </div>
         </nav>
