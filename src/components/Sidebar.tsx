@@ -45,6 +45,16 @@ const Sidebar: React.FC = () => {
                     <i className="fa-solid fa-window-restore mr-2"></i>
                     SubTopic
                 </NavLink>
+                <NavLink
+                    to="/type-grammar"
+                    className={({ isActive }) =>
+                        `flex items-center px-4 py-2 mb-3 rounded ${isActive ? 'bg-gray-200 text-blue-600 font-bold' : 'text-gray-700 hover:bg-gray-200'
+                        }`
+                    }
+                >
+                    <i className="fa-solid fa-spell-check mr-2"></i>
+                    Type Grammar
+                </NavLink>
             </nav>
         </div>
     );

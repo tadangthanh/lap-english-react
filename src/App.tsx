@@ -8,6 +8,7 @@ import MainTopicPage from './components/topic/MainTopicPage';
 import { SubTopicPageManager } from './components/topic/SubTopicPageManager';
 import HeaderWithTabs from './components/tab/HeaderWithTabs';
 import { WebSocketProvider } from './components/websocket/WebSocketProvider';
+import { TypeGrammarPage } from './components/typeGrammar/TypeGrammarPage';
 
 const AppLayout: React.FC = () => {
   const location = useLocation();
@@ -30,6 +31,7 @@ const AppLayout: React.FC = () => {
                 <Route path="/" element={<h2>Home</h2>} />
                 <Route path="/word" element={<WordPage />} />
                 <Route path="/topic" element={<MainTopicPage />} />
+                <Route path="/type-grammar" element={<TypeGrammarPage />} />
                 <Route path="/sub-topic/:subTopicId" element={<HeaderWithTabs />} />
                 {/* Thêm các route khác ở đây */}
                 <Route path="/sub-topic" element={<SubTopicPageManager />} />

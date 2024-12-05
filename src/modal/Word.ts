@@ -34,7 +34,7 @@ export class Word extends BaseModal {
         updatedAt: Date,
         updateBy: string
     ) {
-        super(id, createdAt, updatedAt, updateBy);
+        super(id, createdAt, updatedAt, updateBy, updateBy);
         this.word = word;
         this.meaning = meaning;
         this.pronounceUK = pronounceUK;

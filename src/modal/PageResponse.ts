@@ -14,6 +14,4 @@ export class PageResponse<T> {
         this.totalItems = totalItems;
         this.items = items;
     }
-
-
 }

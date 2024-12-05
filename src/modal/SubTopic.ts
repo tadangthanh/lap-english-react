@@ -7,8 +7,8 @@ export class SubTopic extends BaseModal {
     mainTopicId: number;
     wordCount?: number;
 
-    constructor(id: number, name: string, blobName: string, mainTopicId: number, mainTopicName: string, createdAt: Date, updatedAt: Date, updateBy: string) {
-        super(id, createdAt, updatedAt, updateBy);
+    constructor(id: number, name: string, blobName: string, mainTopicId: number, mainTopicName: string, createdAt: Date, updatedAt: Date, updateBy: string, createdBy: string) {
+        super(id, createdAt, updatedAt, updateBy, createdBy);
         this.name = name;
         this.blobName = blobName;
         this.mainTopicName = mainTopicName;

@@ -5,11 +5,6 @@ export class Sentence extends BaseModal {
     translation: string;
     subTopicId: number;
     subTopicName: string;
-    createdAt: Date;
-    updatedAt: Date;
-    createdBy: string;
-    updatedBy: string;
-
     constructor(
         id: number,
         sentence: string,
@@ -21,16 +16,11 @@ export class Sentence extends BaseModal {
         updatedAt: Date,
         updateBy: string
     ) {
-        super(id, createdAt, updatedAt, updateBy);
-
+        super(id, createdAt, updatedAt, updateBy, createdBy);
         this.sentence = sentence;
         this.translation = translation;
         this.subTopicId = subTopicId;
         this.subTopicName = subTopicName;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.createdBy = createdBy;
-        this.updatedBy = updateBy;
     }
 
 
