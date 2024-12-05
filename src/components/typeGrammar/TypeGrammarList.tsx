@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { TypeGrammar } from "../../modal/TypeGrammar";
 import ConfirmationModal from "../common/ConfirmationModal";
 
@@ -17,6 +18,8 @@ export const TypeGrammarList: React.FC<TypeGrammarListProps> = ({
 }) => {
   const [typeGrammarId, setTypeGrammarId] = useState<number>(-1);
   const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate(); // Initialize navigate
+
   return (
     <div className="p-4 bg-white shadow rounded-lg">
       <h2 className="text-xl font-bold mb-4">Type Grammar List</h2>
@@ -27,7 +30,8 @@ export const TypeGrammarList: React.FC<TypeGrammarListProps> = ({
           {typeGrammars.map((typeGrammar) => (
             <li
               key={typeGrammar.id}
-              className="flex justify-between items-center p-4 bg-gray-100 rounded-lg"
+              className="flex justify-between items-center p-4 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200"
+              onClick={() => navigate(`/type-grammar/${typeGrammar.id}/grammar`)} // Navigate to Grammar page
             >
               <div className="flex items-center">
                 <h3 className="text-lg font-semibold">{typeGrammar.name}</h3>
@@ -36,21 +40,28 @@ export const TypeGrammarList: React.FC<TypeGrammarListProps> = ({
                 {typeGrammarEdit?.id === typeGrammar.id ? (
                   <button
                     className="px-3 py-1 text-sm text-yellow-600 bg-yellow-200 rounded hover:bg-yellow-300"
-                    onClick={() => setTypeGrammarEdit(null)}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent navigation on button click
+                      setTypeGrammarEdit(null);
+                    }}
                   >
                     Cancel
                   </button>
                 ) : (
                   <button
                     className="text-blue-500 hover:text-blue-700"
-                    onClick={() => setTypeGrammarEdit(typeGrammar)}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent navigation on button click
+                      setTypeGrammarEdit(typeGrammar);
+                    }}
                   >
                     <i className="fas fa-edit me-3"></i>
                   </button>
                 )}
                 <button
                   className="text-red-500 hover:text-red-700"
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent navigation on button click
                     setShowModal(true);
                     setTypeGrammarId(typeGrammar.id);
                   }}

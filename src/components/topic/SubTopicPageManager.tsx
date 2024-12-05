@@ -68,7 +68,6 @@ export const SubTopicPageManager: React.FC = () => {
     deleteSubTopic(id).then((response: any) => {
       if (response.status === 204) {
         setSubTopics((prev) => prev.filter((item) => item.id !== id));
-        toast.success(response.message, { containerId: "sub-topic" });
       } else {
         toast.error(response.message, { containerId: "sub-topic" });
       }
@@ -259,7 +258,7 @@ export const SubTopicPageManager: React.FC = () => {
   };
   return (
     <DataContext.Provider value={{ size, handleChangePageSize }}>
-      <div className="mb-4 mt-5 transition-transform transform scale-100">
+      <div className="p-4 mb-4 mt-5 transition-transform transform scale-100">
         <Loading loading={isLoading} />
         <ToastContainer containerId="sub-topic" />
         <h5 className="text-lg font-semibold mb-4">Sub Topic</h5>

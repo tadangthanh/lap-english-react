@@ -9,6 +9,7 @@ import { SubTopicPageManager } from './components/topic/SubTopicPageManager';
 import HeaderWithTabs from './components/tab/HeaderWithTabs';
 import { WebSocketProvider } from './components/websocket/WebSocketProvider';
 import { TypeGrammarPage } from './components/typeGrammar/TypeGrammarPage';
+import { GrammarPage } from './components/grammar/GrammarPage';
 
 const AppLayout: React.FC = () => {
   const location = useLocation();
@@ -17,26 +18,32 @@ const AppLayout: React.FC = () => {
   return (
     <WebSocketProvider>
       <>
+        {/* Header */}
         {!isLoginPage && <AppNavbar />}
-        <div className="container-fluid">
-          <div className="row">
-            {!isLoginPage && (
-              <div className="col-md-2 p-0">
-                <Sidebar />
-              </div>
-            )}
-            <div className={isLoginPage ? 'col-12' : 'col-md-10'}>
-              <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/" element={<h2>Home</h2>} />
-                <Route path="/word" element={<WordPage />} />
-                <Route path="/topic" element={<MainTopicPage />} />
-                <Route path="/type-grammar" element={<TypeGrammarPage />} />
-                <Route path="/sub-topic/:subTopicId" element={<HeaderWithTabs />} />
-                {/* Thêm các route khác ở đây */}
-                <Route path="/sub-topic" element={<SubTopicPageManager />} />
-              </Routes>
+
+        {/* Layout với Sidebar và Content */}
+        <div className="flex h-screen overflow-hidden">
+          {/* Sidebar */}
+          {!isLoginPage && (
+            <div className="w-64 bg-gray-800 text-white h-full fixed top-0 left-0 pt-16">
+              <Sidebar />
             </div>
+          )}
+
+          {/* Main Content */}
+          <div
+            className={`flex-1 overflow-y-auto pt-16 pl-0 ${!isLoginPage ? 'pl-64' : ''} bg-gray-100`}
+          >
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/" element={<h2 className="p-4">Home</h2>} />
+              <Route path="/word" element={<WordPage />} />
+              <Route path="/topic" element={<MainTopicPage />} />
+              <Route path="/type-grammar" element={<TypeGrammarPage />} />
+              <Route path="/type-grammar/:typeId/grammar" element={<GrammarPage />} />
+              <Route path="/sub-topic/:subTopicId" element={<HeaderWithTabs />} />
+              <Route path="/sub-topic" element={<SubTopicPageManager />} />
+            </Routes>
           </div>
         </div>
       </>

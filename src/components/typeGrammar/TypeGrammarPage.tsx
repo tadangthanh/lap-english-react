@@ -14,11 +14,13 @@ import {
 } from "../../api/typegrammar/TypeGrammarApi";
 import { Type } from "react-toastify/dist/utils";
 import { Loading } from "../common/LoadingSpinner";
+import SearchBar from "../common/SearchBar";
 
 export const TypeGrammarPage: React.FC = () => {
   const [typeGrammars, setTypeGrammars] = useState<TypeGrammar[]>([]);
   const [size, setSize] = useState<number>(10);
   const [page, setPage] = useState<number>(0);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [pageResponse, setPageResponse] = useState<PageResponse<TypeGrammar>>({
     pageNo: 0,
@@ -31,25 +33,34 @@ export const TypeGrammarPage: React.FC = () => {
   const [typeGrammarEdit, setTypeGrammarEdit] = useState<TypeGrammar | null>(
     null
   );
-  useEffect(() => {
-    getTypeGrammarPage(page, size, "name", "asc", "name")
+  const initTypeGrammarPage = (pageNo: number) => {
+    getTypeGrammarPage(pageNo, size, "name", "asc", "name")
       .then((response) => {
         setIsLoading(true);
         if (response.status === 200) {
           setTypeGrammars(response.data.items);
           setPageResponse(response.data);
         } else {
-          toast.error(response.message, { containerId: "type-grammar" });
+          console.log(response.message);
         }
       })
       .catch((error) => {
-        toast.error(error.message, { containerId: "type-grammar" });
+        console.log(error.message);
       })
       .finally(() => {
         setIsLoading(false);
       });
-  }, [page, size]);
+  }
+  useEffect(() => {
+    initTypeGrammarPage(page);
+  }, [page]);
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      initTypeGrammarPage(0);
+    }
+  }, [searchQuery]);
 
+  // tao moi hoac cap nhat
   const handleCreateOrUpdateTypeGrammar = (typeGrammar: TypeGrammar) => {
     //id = 0 là tạo mới
     if (typeGrammar.id > 0) {
@@ -96,6 +107,24 @@ export const TypeGrammarPage: React.FC = () => {
       });
   };
 
+  const handleSearchByName = () => {
+    setIsLoading(true);
+    getTypeGrammarPage(page, size, "name", "asc", "name~" + searchQuery)
+      .then((response) => {
+        if (response.status === 200) {
+          setTypeGrammars(response.data.items);
+          setPageResponse(response.data);
+        } else {
+          console.log(response.message);
+        }
+      })
+      .catch((error) => {
+        console.log(error.message);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
       <Loading loading={isLoading} />
@@ -107,7 +136,15 @@ export const TypeGrammarPage: React.FC = () => {
           existingTypeGrammar={typeGrammarEdit}
           setExistingTypeGrammar={setTypeGrammarEdit}
         />
-
+        {/* Thanh tìm kiếm */}
+        <SearchBar
+          searchQuery={searchQuery}
+          onSearchQueryChange={setSearchQuery}
+          onSearch={() => {
+            setPage(0); // Reset page khi tìm kiếm
+            handleSearchByName();
+          }}
+        />
         {/* Danh sách các Type Grammar */}
         <TypeGrammarList
           typeGrammars={typeGrammars}
