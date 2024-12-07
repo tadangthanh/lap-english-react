@@ -68,16 +68,16 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
         items: []
     })
     // xác thực token còn hiệu lực hay k
-    useEffect(() => {
-        setIsLoading(true);
-        verifyToken().then((response: any) => {
-            if (response.status !== 200) {
-                navigate('/login');
-            }
-            setIsLoading(false);
-        })
-        setIsLoading(false);
-    }, []);
+    // useEffect(() => {
+    //     setIsLoading(true);
+    //     verifyToken().then((response: any) => {
+    //         if (response.status !== 200) {
+    //             navigate('/login');
+    //         }
+    //         setIsLoading(false);
+    //     })
+    //     setIsLoading(false);
+    // }, []);
 
     // lấy page dựa trên sự thay đổi của page,size,direction (chiều sắp xếp: asc-desc)
     useEffect(() => {
