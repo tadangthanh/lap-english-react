@@ -40,17 +40,8 @@ export const SubTopicPageManager: React.FC = () => {
   const [size, setSize] = useState<number>(10);
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [typeSubTopic, setTypeSubTopic] = useState<string>("word");
   const navigate = useNavigate();
-  // useEffect(() => {
-  //     setIsLoading(false);
-  //     verifyToken().then((response: any) => {
-  //         if (response.status !== 200) {
-  //             navigate('/login');
-  //         }
-  //         setIsLoading(false);
-  //     })
-  //     setIsLoading(false);
-  // }, []);
   useEffect(() => {
     setSubTopicSearch(searchField + searchOperation + searchValue);
   }, [searchField, searchOperation, searchValue]);
@@ -134,6 +125,7 @@ export const SubTopicPageManager: React.FC = () => {
       id: 0,
       name: subTopicName,
       blobName: "",
+      word: typeSubTopic === "word" ? true : false,
       mainTopicId: mainTopicIdSelected,
       mainTopicName: "",
       // wordCount: 0,
@@ -163,6 +155,7 @@ export const SubTopicPageManager: React.FC = () => {
   useEffect(() => {
     if (subTopicEdit) {
       setSubTopicName(subTopicEdit.name);
+      setTypeSubTopic(subTopicEdit.word ? "word" : "sentence");
       setMainTopicIdSelected(subTopicEdit.mainTopicId);
     } else {
       setSubTopicName("");
@@ -187,6 +180,7 @@ export const SubTopicPageManager: React.FC = () => {
         {
           ...subTopicEdit,
           name: subTopicName,
+          word: typeSubTopic === "word" ? true : false,
         },
         file ?? undefined
       ).then((response: any) => {
@@ -328,6 +322,10 @@ export const SubTopicPageManager: React.FC = () => {
                   idMainTopicSelected={mainTopicIdSelected}
                 />
               </div>
+              <div className="mb-4">Type: <select value={typeSubTopic} onChange={(e) => setTypeSubTopic(e.target.value)} name="typeSubTopic" id="typeSubTopic">
+                <option value="word">Word</option>
+                <option value="sentence">Sentence</option>
+              </select></div>
             </div>
             <div className="flex mt-4">
               {subTopicEdit ? (

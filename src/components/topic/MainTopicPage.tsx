@@ -28,6 +28,7 @@ const MainTopicPage: React.FC = () => {
   const [mainTopicSearch, setMainTopicSearch] = useState<string>("");
   const [sortBy, setSortBy] = useState<string>("name");
   const [searchField, setSearchField] = useState<string>("name");
+  const [typeMainTopic, setTypeMainTopic] = useState<string>("word");
   const [searchOperation, setSearchOperation] = useState<SearchOperation>(
     SearchOperation.LIKE
   );
@@ -44,16 +45,6 @@ const MainTopicPage: React.FC = () => {
     setMainTopicSearch(searchField + searchOperation + searchValue);
   }, [searchField, searchOperation, searchValue]);
   const navigate = useNavigate();
-  // useEffect(() => {
-  //     setIsLoading(false);
-  //     verifyToken().then((response: any) => {
-  //         if (response.status !== 200) {
-  //             navigate('/login');
-  //         }
-  //         setIsLoading(false);
-  //     })
-  //     setIsLoading(false);
-  // }, []);
   useEffect(() => {
     setMainTopicEdit(null);
     getMainTopicPage(page, size, sortBy, direction, mainTopicSearch)
@@ -75,6 +66,7 @@ const MainTopicPage: React.FC = () => {
     inputMainTopicName.current?.scrollIntoView();
     if (mainTopicEdit) {
       setMainTopicName(mainTopicEdit.name);
+      setTypeMainTopic(mainTopicEdit.word ? "word" : "sentence");
     } else {
       setMainTopicName("");
     }
@@ -97,6 +89,7 @@ const MainTopicPage: React.FC = () => {
     const newMainTopic: MainTopic = {
       id: 0,
       name: mainTopicName,
+      word: typeMainTopic === "word" ? true : false,
       createdAt: new Date(),
       updatedAt: new Date(),
       updatedBy: "",
@@ -128,6 +121,7 @@ const MainTopicPage: React.FC = () => {
       const newMainTopic: MainTopic = {
         id: mainTopicEdit.id,
         name: mainTopicName,
+        word: typeMainTopic === "word" ? true : false,
         createdAt: mainTopicEdit.createdAt,
         updatedAt: new Date(),
         updatedBy: "",
@@ -228,6 +222,10 @@ const MainTopicPage: React.FC = () => {
               setError("");
             }}
           />
+          <div className="mb-4">Type: <select value={typeMainTopic} onChange={(e) => setTypeMainTopic(e.target.value)} name="typeMainTopic" id="typeMainTopic">
+            <option value="word">Word</option>
+            <option value="sentence">Sentence</option>
+          </select></div>
           {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
           {!mainTopicEdit ? (
             <button
