@@ -6,7 +6,7 @@ import { PageResponse } from "../../modal/PageResponse";
 import { GrammarForm } from "./GrammarForm";
 import { GrammarList } from "./GrammarList";
 import Breadcrumb from "../common/Breadcrumb";
-import { createGrammar, getGrammarPage } from "../../api/grammar/GrammarApi";
+import { createGrammar, deleteGrammar, getGrammarPage } from "../../api/grammar/GrammarApi";
 import { Loading } from "../common/LoadingSpinner";
 import SearchBar from "../common/SearchBar"; // Import SearchBar component
 import { TypeGrammar } from "../../modal/TypeGrammar";
@@ -75,6 +75,11 @@ export const GrammarPage = () => {
             initGrammarPage(0);
         }
     }, [searchQuery]);
+    useEffect(() => {
+        if (grammarEdit) {
+            console.log("grammarEdit", grammarEdit)
+        }
+    }, [grammarEdit]);
 
     const handleSearchByName = () => {
         setIsLoading(true);
@@ -121,7 +126,17 @@ export const GrammarPage = () => {
 
     // Xóa Grammar
     const handleDeleteGrammar = (id: number) => {
-        setGrammars((prev) => prev.filter((g) => g.id !== id));
+        deleteGrammar(id)
+            .then((response) => {
+                if (response.status === 200) {
+                    initGrammarPage(page);
+                } else {
+                    toast.error(response.message, { containerId: "grammar" });
+                }
+            })
+            .catch((error) => {
+                toast.error(error.message, { containerId: "grammar" });
+            });
     };
 
     return (
@@ -155,7 +170,8 @@ export const GrammarPage = () => {
                 {/* Danh sách các Grammar */}
                 <GrammarList
                     grammars={grammars}
-                    onEdit={setGrammarEdit}
+                    setGrammarEdit={setGrammarEdit}
+                    grammarEdit={grammarEdit}
                     onDelete={handleDeleteGrammar}
                 />
 

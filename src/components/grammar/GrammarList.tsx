@@ -2,13 +2,15 @@ import { Grammar } from "../../modal/Grammar";
 
 interface GrammarListProps {
     grammars: Grammar[];
-    onEdit: (grammar: Grammar) => void;
+    setGrammarEdit: (grammar: Grammar | null) => void;
+    grammarEdit: Grammar | null;
     onDelete: (id: number) => void;
 }
 
 export const GrammarList: React.FC<GrammarListProps> = ({
     grammars,
-    onEdit,
+    setGrammarEdit,
+    grammarEdit,
     onDelete,
 }) => {
     return (
@@ -28,18 +30,30 @@ export const GrammarList: React.FC<GrammarListProps> = ({
                                 <p className="text-sm text-gray-500">{grammar.description}</p>
                             </div>
                             <div className="flex space-x-2">
-                                <button
-                                    className="text-blue-500 hover:text-blue-700"
-                                    onClick={() => onEdit(grammar)}
-                                >
-                                    <i className="fas fa-edit"></i>
-                                </button>
+                                {grammarEdit?.id === grammar.id ?
+                                    <button
+                                        className="px-3 py-1 text-sm text-yellow-600 bg-yellow-200 rounded hover:bg-yellow-300"
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // Prevent navigation on button click
+                                            setGrammarEdit(null);
+                                        }}
+                                    >
+                                        Cancel
+                                    </button> :
+                                    <button
+                                        className="me-2 text-blue-500 hover:text-blue-700"
+                                        onClick={() => setGrammarEdit(grammar)}
+                                    >
+                                        <i className="fas fa-edit"></i>
+                                    </button>
+                                }
                                 <button
                                     className="text-red-500 hover:text-red-700"
                                     onClick={() => onDelete(grammar.id)}
                                 >
                                     <i className="fas fa-trash-alt"></i>
                                 </button>
+
                             </div>
                         </li>
                     ))}

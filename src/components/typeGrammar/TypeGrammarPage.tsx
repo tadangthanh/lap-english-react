@@ -115,11 +115,11 @@ export const TypeGrammarPage: React.FC = () => {
           setTypeGrammars(response.data.items);
           setPageResponse(response.data);
         } else {
-          console.log(response.message);
+          toast.error(response.message, { containerId: "type-grammar" });
         }
       })
       .catch((error) => {
-        console.log(error.message);
+        toast.error(error.message, { containerId: "type-grammar" });
       })
       .finally(() => {
         setIsLoading(false);
