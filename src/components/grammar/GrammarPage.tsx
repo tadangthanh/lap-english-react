@@ -6,7 +6,7 @@ import { PageResponse } from "../../modal/PageResponse";
 import { GrammarForm } from "./GrammarForm";
 import { GrammarList } from "./GrammarList";
 import Breadcrumb from "../common/Breadcrumb";
-import { createGrammar, deleteGrammar, getGrammarPage } from "../../api/grammar/GrammarApi";
+import { createGrammar, deleteGrammar, getGrammarPage, updateGrammar } from "../../api/grammar/GrammarApi";
 import { Loading } from "../common/LoadingSpinner";
 import SearchBar from "../common/SearchBar"; // Import SearchBar component
 import { TypeGrammar } from "../../modal/TypeGrammar";
@@ -41,11 +41,11 @@ export const GrammarPage = () => {
                     setGrammars(response.data.items);
                     setPageResponse(response.data);
                 } else {
-                    console.log(response.message);
+                    toast.error(response.message, { containerId: "grammar" });
                 }
             })
             .catch((error) => {
-                console.log(error.message);
+                toast.error(error.message, { containerId: "grammar" });
             })
             .finally(() => {
                 setIsLoading(false);
@@ -75,11 +75,7 @@ export const GrammarPage = () => {
             initGrammarPage(0);
         }
     }, [searchQuery]);
-    useEffect(() => {
-        if (grammarEdit) {
-            console.log("grammarEdit", grammarEdit)
-        }
-    }, [grammarEdit]);
+
 
     const handleSearchByName = () => {
         setIsLoading(true);
@@ -104,16 +100,27 @@ export const GrammarPage = () => {
     const handleAddOrUpdateGrammar = (grammar: Grammar) => {
         //id lon hon 0 la cap nhat
         if (grammar.id > 0) {
+            console.log("grammar", grammar)
+            updateGrammar(grammar.id, grammar)
+                .then((response) => {
+                    if (response.status === 200) {
+                        toast.success(response.message, { containerId: "grammar" });
+                        initGrammarPage(page);
+                    } else {
+                        toast.error(response.message, { containerId: "grammar" });
+                    }
+                })
+                .catch((error) => {
+                    toast.error(error.message, { containerId: "grammar" });
+                });
             // update
             return;
         }
         // add
-        console.log("grammar", grammar)
         createGrammar(grammar)
             .then((response) => {
                 if (response.status === 201) {
                     toast.success(response.message, { containerId: "grammar" });
-                    console.log("response", response)
                     initGrammarPage(page);
                 } else {
                     toast.error(response.message, { containerId: "grammar" });
@@ -138,6 +145,7 @@ export const GrammarPage = () => {
                 toast.error(error.message, { containerId: "grammar" });
             });
     };
+
 
     return (
         <div className="p-8 bg-gray-100 min-h-screen">
@@ -170,6 +178,7 @@ export const GrammarPage = () => {
                 {/* Danh sách các Grammar */}
                 <GrammarList
                     grammars={grammars}
+                    typeGrammarId={+typeId!}
                     setGrammarEdit={setGrammarEdit}
                     grammarEdit={grammarEdit}
                     onDelete={handleDeleteGrammar}

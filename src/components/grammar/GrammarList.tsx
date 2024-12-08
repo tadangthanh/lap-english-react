@@ -1,18 +1,26 @@
+import { useNavigate } from "react-router-dom";
 import { Grammar } from "../../modal/Grammar";
+import ConfirmationModal from "../common/ConfirmationModal";
+import { useState } from "react";
 
 interface GrammarListProps {
     grammars: Grammar[];
     setGrammarEdit: (grammar: Grammar | null) => void;
     grammarEdit: Grammar | null;
     onDelete: (id: number) => void;
+    typeGrammarId: number;
 }
 
 export const GrammarList: React.FC<GrammarListProps> = ({
     grammars,
     setGrammarEdit,
     grammarEdit,
+    typeGrammarId,
     onDelete,
 }) => {
+    const navigate = useNavigate(); // Initialize navigate
+    const [grammarId, setGrammarId] = useState<number>(-1);
+    const [showModal, setShowModal] = useState(false);
     return (
         <div className="p-4 bg-white shadow rounded-lg">
             <h2 className="text-xl font-bold mb-4">Grammar List</h2>
@@ -23,7 +31,8 @@ export const GrammarList: React.FC<GrammarListProps> = ({
                     {grammars.map((grammar) => (
                         <li
                             key={grammar.id}
-                            className="flex justify-between items-center p-4 bg-gray-100 rounded-lg"
+                            className="flex justify-between items-center p-4 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200"
+                            onClick={() => navigate(`/type-grammar/${typeGrammarId}/grammar/${grammar.id}/grammatical-structure`)} // Navigate to Grammar page                        
                         >
                             <div>
                                 <h3 className="text-lg font-semibold">{grammar.name}</h3>
@@ -42,14 +51,21 @@ export const GrammarList: React.FC<GrammarListProps> = ({
                                     </button> :
                                     <button
                                         className="me-2 text-blue-500 hover:text-blue-700"
-                                        onClick={() => setGrammarEdit(grammar)}
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // Prevent navigation on button click
+                                            setGrammarEdit(grammar)
+                                        }}
                                     >
                                         <i className="fas fa-edit"></i>
                                     </button>
                                 }
                                 <button
                                     className="text-red-500 hover:text-red-700"
-                                    onClick={() => onDelete(grammar.id)}
+                                    onClick={(e) => {
+                                        e.stopPropagation(); // Prevent navigation on button click
+                                        setGrammarId(grammar.id);
+                                        setShowModal(true);
+                                    }}
                                 >
                                     <i className="fas fa-trash-alt"></i>
                                 </button>
@@ -59,6 +75,20 @@ export const GrammarList: React.FC<GrammarListProps> = ({
                     ))}
                 </ul>
             )}
+            {/* Confirmation Modal */}
+            <ConfirmationModal
+                title="Confirm Deletion"
+                message="Are you sure you want to delete this grammar? This action cannot be undone."
+                labelConfirm="Delete"
+                labelCancel="Cancel"
+                colorConfirm="red"
+                show={showModal}
+                onConfirm={() => {
+                    onDelete(grammarId);
+                    setShowModal(false);
+                }}
+                onCancel={() => setShowModal(false)}
+            />
         </div>
     );
 };

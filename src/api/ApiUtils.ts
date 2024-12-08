@@ -1,5 +1,8 @@
 import Cookies from 'js-cookie';
 import { getRefreshToken, getToken, setRefreshToken, setToken } from './AuthenticationApi';
+import { CustomQuizRequest } from '../modal/CustomQuizRequest';
+import { QuizAnswerRequest } from '../modal/QuizAnswerRequest';
+import { ExerciseRequest } from '../modal/ExerciseRequest';
 
 export const apiUrl = process.env.REACT_APP_API_URL;
 export const apiWsUrl = process.env.REACT_APP_WS_URL;
@@ -23,26 +26,90 @@ export async function get(url: string, retryCount = 0): Promise<any> {
         throw error;
     }
 }
+
+
+export const createExerciseFormData = (exerciseRequest: ExerciseRequest): FormData => {
+    const formData = new FormData();
+
+    // Thêm các trường của ExerciseRequest
+    formData.append("grammaticalStructureId", exerciseRequest.grammaticalStructureId.toString());
+
+    // Thêm CustomQuizRequest vào FormData
+    const customQuiz = exerciseRequest.customQuiz;
+
+    formData.append("customQuiz.typeQuiz", customQuiz.typeQuiz.toString());
+    formData.append("customQuiz.question", customQuiz.question);
+    formData.append("customQuiz.exerciseGrammarId", customQuiz.exerciseGrammarId.toString());
+
+    // Thêm file imageQuestion nếu có
+    if (customQuiz.imageQuestion) {
+        formData.append("customQuiz.imageQuestion", customQuiz.imageQuestion);
+    }
+
+    // Thêm mảng quizAnswers vào FormData
+    customQuiz.quizAnswers.forEach((answer: QuizAnswerRequest, index: number) => {
+        formData.append(`customQuiz.quizAnswers[${index}].answer`, answer.answer);
+        formData.append(`customQuiz.quizAnswers[${index}].correct`, answer.correct.toString());
+        formData.append(`customQuiz.quizAnswers[${index}].customQuizId`, answer.customQuizId.toString());
+
+        if (answer.imgAnswer) {
+            formData.append(`customQuiz.quizAnswers[${index}].imgAnswer`, answer.imgAnswer);
+        }
+    });
+
+    return formData;
+};
+
+// export async function post(url: string, retryCount = 0, body: any): Promise<any> {
+//     const token = getToken();
+//     try {
+//         let response = await await fetch(url, {
+//             headers: {
+//                 'Authorization': `Bearer ${token}`,
+//                 'Content-Type': 'application/json',
+//             },
+//             method: "POST",
+//             body: JSON.stringify(body)
+//         });
+//         if (response.status === 401 && retryCount < 1) {
+//             await refreshTokens();
+//             return post(url, retryCount + 1, body);
+//         }
+//         return await response.json();
+//     } catch (error) {
+//         throw error;
+//     }
+// }
 export async function post(url: string, retryCount = 0, body: any): Promise<any> {
     const token = getToken();
+    const headers: Record<string, string> = {
+        'Authorization': `Bearer ${token}`,
+    };
+
+    // Chỉ thêm Content-Type là application/json nếu body không phải FormData
+    const isFormData = body instanceof FormData;
+    if (!isFormData) {
+        headers['Content-Type'] = 'application/json';
+    }
+
     try {
-        let response = await await fetch(url, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
+        const response = await fetch(url, {
+            headers: headers,
             method: "POST",
-            body: JSON.stringify(body)
+            body: isFormData ? body : JSON.stringify(body), // Không stringify nếu body là FormData
         });
+
         if (response.status === 401 && retryCount < 1) {
             await refreshTokens();
             return post(url, retryCount + 1, body);
         }
+
         return await response.json();
     } catch (error) {
         throw error;
     }
 }
+
 export async function postFormData(
     url: string,
     retryCount = 0,

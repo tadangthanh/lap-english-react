@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Grammar } from "../../modal/Grammar";
 
 interface GrammarFormProps {
@@ -41,6 +41,15 @@ export const GrammarForm: React.FC<GrammarFormProps> = ({
         setDescription("");
     };
 
+    useEffect(() => {
+        if (existingGrammar) {
+            setName(existingGrammar.name);
+            setDescription(existingGrammar.description);
+        } else {
+            setName("");
+            setDescription("");
+        }
+    }, [existingGrammar]);
     return (
         <div className="p-4 bg-white shadow rounded-lg mb-8">
             {/* Nút mở form */}
