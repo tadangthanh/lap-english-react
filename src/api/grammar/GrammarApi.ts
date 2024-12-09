@@ -13,3 +13,6 @@ export const deleteGrammar = async (id: number) => {
 export const updateGrammar = async (id: number, grammar: Grammar) => {
     return await put(`${apiUrl}/grammar/${id}`, 0, grammar);
 };
+export const getGrammarById = (id: number) => {
+    return get(`${apiUrl}/grammar/${id}`);
+}

@@ -8,6 +8,7 @@ import { getSubTopicByName, getSubTopicPage } from '../../api/subtopic/SubTopicA
 import { Paging } from '../common/Paging';
 import { SearchOperation } from '../../modal/SearchOperation';
 import '../css/common.css';
+import { verifyToken } from '../../api/ApiUtils';
 const WordPage: React.FC = () => {
     const [subTopics, setSubTopics] = useState<SubTopic[]>([]);
     const [page, setPage] = useState<number>(0);
@@ -39,6 +40,14 @@ const WordPage: React.FC = () => {
     }, [page, direction]);
     const navigate = useNavigate();
 
+    // xác thực token còn hiệu lực hay k
+    useEffect(() => {
+        verifyToken().then((response: any) => {
+            if (response.status !== 200) {
+                navigate('/login');
+            }
+        })
+    }, []);
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         if (e.target.value === '') {
             setSearchValue('');

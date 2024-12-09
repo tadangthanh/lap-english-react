@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Grammar } from "../../modal/Grammar";
 import { Paging } from "../common/Paging";
 import { PageResponse } from "../../modal/PageResponse";
@@ -12,6 +12,7 @@ import SearchBar from "../common/SearchBar"; // Import SearchBar component
 import { TypeGrammar } from "../../modal/TypeGrammar";
 import { getTypeGrammarPage } from "../../api/typegrammar/TypeGrammarApi";
 import { toast, ToastContainer } from "react-toastify";
+import { verifyToken } from "../../api/ApiUtils";
 
 export const GrammarPage = () => {
     const { typeId } = useParams<{ typeId: string }>();
@@ -75,7 +76,15 @@ export const GrammarPage = () => {
             initGrammarPage(0);
         }
     }, [searchQuery]);
-
+    const navigate = useNavigate();
+    // xác thực token còn hiệu lực hay k
+    useEffect(() => {
+        verifyToken().then((response: any) => {
+            if (response.status !== 200) {
+                navigate('/login');
+            }
+        })
+    }, []);
 
     const handleSearchByName = () => {
         setIsLoading(true);

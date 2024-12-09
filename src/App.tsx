@@ -38,7 +38,6 @@ const AppLayout: React.FC = () => {
           >
             <Routes>
               <Route path="/login" element={<Login />} />
-              <Route path="/" element={<h2 className="p-4">Home</h2>} />
               <Route path="/word" element={<WordPage />} />
               <Route path="/topic" element={<MainTopicPage />} />
               <Route path="/type-grammar" element={<TypeGrammarPage />} />

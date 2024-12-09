@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import { WebSocketContext } from './websocket/WebSocketProvider';
 import 'react-toastify/dist/ReactToastify.css';
@@ -6,13 +6,15 @@ import 'react-toastify/dist/ReactToastify.css';
 const AppNavbar: React.FC = () => {
     const { lastMessage } = useContext(WebSocketContext)!;
 
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
     useEffect(() => {
         if (lastMessage) {
             const { status, message } = lastMessage;
             if (status === 201) {
-                toast.success(message, { containerId: 'navbar', position: "top-center" });
+                toast.success(message, { containerId: 'navbar', position: 'top-center' });
             } else {
-                toast.error(message, { containerId: 'navbar', position: "top-center" });
+                toast.error(message, { containerId: 'navbar', position: 'top-center' });
             }
         }
     }, [lastMessage]);
@@ -21,18 +23,38 @@ const AppNavbar: React.FC = () => {
         <nav className="bg-gray-900 shadow-lg fixed w-full z-10 top-0 left-0">
             <div className="container mx-auto px-4 py-3 flex justify-between items-center">
                 {/* Left: Brand */}
-                <a href="#home" className="text-white text-2xl font-bold hover:text-blue-400">
+                <a href="#home" className="text-white text-2xl font-bold hover:text-blue-400 flex items-center">
+                    <i className="fas fa-cogs mr-2"></i> {/* Font Awesome icon */}
                     Management
                 </a>
 
-                {/* Right: Navigation Links (Add icons or links if necessary) */}
-                <div className="flex space-x-4">
-                    <a href="#dashboard" className="text-gray-300 hover:text-white transition duration-300">
-                        Dashboard
-                    </a>
-                    <a href="#profile" className="text-gray-300 hover:text-white transition duration-300">
-                        Profile
-                    </a>
+                {/* Right: Navigation Links */}
+                <div className="flex space-x-4 items-center relative">
+                    {/* Profile with Dropdown */}
+                    <div
+                        className="relative p-2"
+                        onMouseEnter={() => setIsDropdownOpen(true)}
+                        onMouseLeave={() => setIsDropdownOpen(false)}
+                    >
+                        <a
+                            href="#profile"
+                            className="text-gray-300 hover:text-white transition duration-300 flex items-center cursor-pointer"
+                        >
+                            <i className="fas fa-user-circle mr-2"></i> {/* Profile Icon */}
+                            Profile
+                        </a>
+                        {isDropdownOpen && (
+                            <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg overflow-hidden z-20">
+                                <a
+                                    href="#logout"
+                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                >
+                                    <i className="fas fa-sign-out-alt mr-2"></i> {/* Logout Icon */}
+                                    Logout
+                                </a>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 

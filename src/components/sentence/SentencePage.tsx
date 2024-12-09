@@ -9,6 +9,8 @@ import { DataContext } from '../context/DataContext';
 import { SearchOperation } from "../../modal/SearchOperation";
 import ExcelImportComponent from "../common/ExcelImportComponent";
 import { WebSocketContext } from "../websocket/WebSocketProvider";
+import { useNavigate } from "react-router-dom";
+import { verifyToken } from "../../api/ApiUtils";
 interface SentencePageProps {
     subTopicIdParam?: string;
 }
@@ -28,6 +30,15 @@ export const SentencePage: React.FC<SentencePageProps> = ({ subTopicIdParam }) =
         totalItems: 0,
         items: []
     });
+    const navigate = useNavigate();
+    // xác thực token còn hiệu lực hay k
+    useEffect(() => {
+        verifyToken().then((response: any) => {
+            if (response.status !== 200) {
+                navigate('/login');
+            }
+        })
+    }, []);
     const [page, setPage] = useState<number>(0);
     const [sortBy, setSortBy] = useState<string>('sentence');
     const [direction, setDirection] = useState<string>('asc');

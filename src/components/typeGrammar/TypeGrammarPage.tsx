@@ -15,6 +15,8 @@ import {
 import { Type } from "react-toastify/dist/utils";
 import { Loading } from "../common/LoadingSpinner";
 import SearchBar from "../common/SearchBar";
+import { verifyToken } from "../../api/ApiUtils";
+import { useNavigate } from "react-router-dom";
 
 export const TypeGrammarPage: React.FC = () => {
   const [typeGrammars, setTypeGrammars] = useState<TypeGrammar[]>([]);
@@ -33,6 +35,15 @@ export const TypeGrammarPage: React.FC = () => {
   const [typeGrammarEdit, setTypeGrammarEdit] = useState<TypeGrammar | null>(
     null
   );
+  const navigate = useNavigate();
+  useEffect(() => {
+    verifyToken().then((response: any) => {
+      if (response.status !== 200) {
+        navigate('/login');
+      }
+
+    })
+  }, []);
   const initTypeGrammarPage = (pageNo: number) => {
     getTypeGrammarPage(pageNo, size, "name", "asc", "name")
       .then((response) => {

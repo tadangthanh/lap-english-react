@@ -32,6 +32,7 @@ const MainTopicPage: React.FC = () => {
   const [searchOperation, setSearchOperation] = useState<SearchOperation>(
     SearchOperation.LIKE
   );
+
   const [pageResponse, setPageResponse] = useState<PageResponse<MainTopic>>({
     pageNo: 0,
     pageSize: 10,
@@ -45,6 +46,16 @@ const MainTopicPage: React.FC = () => {
     setMainTopicSearch(searchField + searchOperation + searchValue);
   }, [searchField, searchOperation, searchValue]);
   const navigate = useNavigate();
+  useEffect(() => {
+    setIsLoading(true);
+    verifyToken().then((response: any) => {
+      if (response.status !== 200) {
+        navigate('/login');
+      }
+      setIsLoading(false);
+    })
+    setIsLoading(false);
+  }, []);
   useEffect(() => {
     setMainTopicEdit(null);
     getMainTopicPage(page, size, sortBy, direction, mainTopicSearch)

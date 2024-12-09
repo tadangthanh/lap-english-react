@@ -55,6 +55,15 @@ export const SubTopicPageManager: React.FC = () => {
     totalItems: 0,
     items: [],
   });
+
+  // xác thực token còn hiệu lực hay k
+  useEffect(() => {
+    verifyToken().then((response: any) => {
+      if (response.status !== 200) {
+        navigate('/login');
+      }
+    })
+  }, []);
   const handleDeleteSubTopic = (id: number) => {
     deleteSubTopic(id).then((response: any) => {
       if (response.status === 204) {

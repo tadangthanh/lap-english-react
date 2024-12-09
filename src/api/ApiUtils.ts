@@ -260,6 +260,7 @@ export async function requestWithPost(url: string, body: any, retryCount = 0): P
         // throw error;
     }
 
+
 }
 
 export async function requestWithPostFile(url: string, body: FormData, retryCount = 0): Promise<any> {
@@ -297,15 +298,7 @@ async function fetchWithPostAuthorization(url: string, body: any) {
         method: 'POST'
     });
 }
-async function fetchWithAuthorization(url: string, method = 'GET') {
-    const token = getToken() || '';
-    return await fetch(url, {
-        headers: {
-            'Authorization': `Bearer ${token}`,
-        },
-        method: method
-    });
-}
+
 async function fetchWithMethodAuthorization(url: string, body: any, method = 'GET') {
     console.log("json", JSON.stringify(body));
     const token = getToken() || '';

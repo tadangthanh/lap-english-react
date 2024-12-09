@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 
 // Dữ liệu menu dưới dạng mảng
 const menuItems = [
-    { to: "/", label: "Home", icon: "fas fa-home" },
+    // { to: "/", label: "Home", icon: "fas fa-home" },
     {
         label: "Grammar",
         icon: "fa-solid fa-folder-tree",
@@ -33,7 +33,7 @@ const Sidebar: React.FC = () => {
                 {menuItems.map((item, index) => (
                     <SidebarLink
                         key={index}
-                        to={item.to}
+                        // to={item.to}
                         icon={item.icon}
                         label={item.label}
                         children={item.children}

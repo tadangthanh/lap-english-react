@@ -12,22 +12,23 @@ const Login: React.FC = () => {
         setLoading(true);
         e.preventDefault();
         try {
-            const request = { username, password };
+            const request = { username: username, password };
             const response = await login(request);
-            console.log(response.status);
-            if (response.error) {
+            if (response.status === 200) {
+                console.log(response.data);
+                localStorage.setItem('accessToken', response.data.accessToken);
+                localStorage.setItem('refreshToken', response.data.refreshToken);
                 setLoading(false);
-                console.log(response.message);
-                toast.error(response.message, { containerId: 'page-login' });
-                focusFirstInputField();
+                toast.success(response.message, { containerId: 'page-login' });
+                window.location.href = '/type-grammar';
             } else {
                 setLoading(false);
-                toast.success('Đăng nhập thành công !.', { containerId: 'page-login' });
-                window.location.href = '/';
+                toast.error(response.message, { containerId: 'page-login' });
+                focusFirstInputField();
             }
-        } catch (error) {
+        } catch (error: any) {
             setLoading(false);
-            toast.error('Đăng nhập thất bại !.', { containerId: 'page-login' });
+            toast.error(error.message, { containerId: 'page-login' });
         }
     };
     const focusFirstInputField = () => {
@@ -51,7 +52,7 @@ const Login: React.FC = () => {
                             <input
                                 type="text"
                                 className="form-control"
-                                id="email"
+                                id="username"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                             />

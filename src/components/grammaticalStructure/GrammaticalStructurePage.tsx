@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { GrammaticalStructure } from "../../modal/GrammaticalStructure";
 import { PageResponse } from "../../modal/PageResponse";
 import { Loading } from "../common/LoadingSpinner";
@@ -8,13 +8,16 @@ import SearchBar from "../common/SearchBar";
 import { Paging } from "../common/Paging";
 import { toast, ToastContainer } from "react-toastify";
 import { createGrammaticalStructure, deleteGrammaticalStructure, getGrammaticalStructurePage, updateGrammaticalStructure } from "../../api/grammaticalStructure/GrammaticalStructureApi";
-import { updateGrammar } from "../../api/grammar/GrammarApi";
 import { GrammaticalStructureForm } from "./GrammaticalStructureForm";
 import { GrammaticalStructureList } from "./GrammaticalStructureList";
+import { verifyToken } from "../../api/ApiUtils";
+import { Grammar } from "../../modal/Grammar";
+import { getGrammarById } from "../../api/grammar/GrammarApi";
 
 export const GrammaticalStructurePage = () => {
     const { grammarId } = useParams<{ grammarId: string }>();
     const { typeId } = useParams<{ typeId: string }>();
+    const [grammar, setGrammar] = useState<Grammar>({} as Grammar);
 
     const [structures, setStructures] = useState<GrammaticalStructure[]>([]);
     const [structureEdit, setStructureEdit] = useState<GrammaticalStructure | null>(null);
@@ -30,7 +33,24 @@ export const GrammaticalStructurePage = () => {
         totalItems: 0,
         items: [],
     });
-
+    const navigate = useNavigate();
+    // xác thực token còn hiệu lực hay k
+    useEffect(() => {
+        verifyToken().then((response: any) => {
+            if (response.status !== 200) {
+                navigate('/login');
+            }
+        })
+    }, []);
+    useEffect(() => {
+        getGrammarById(+grammarId!).then((response) => {
+            if (response.status === 200) {
+                setGrammar(response.data);
+            } else {
+                toast.error(response.message, { containerId: "structure" });
+            }
+        });
+    }, [grammarId]);
     // Fetch the Grammatical Structures
     const fetchStructures = (pageNo: number) => {
         setIsLoading(true);
@@ -48,7 +68,6 @@ export const GrammaticalStructurePage = () => {
             })
             .finally(() => setIsLoading(false));
     };
-
     useEffect(() => {
         fetchStructures(page);
     }, [page]);
@@ -119,7 +138,7 @@ export const GrammaticalStructurePage = () => {
             <Breadcrumb />
 
             <div className="max-w-4xl mx-auto">
-                <h1 className="text-2xl font-bold mb-4">Manage Grammatical Structures</h1>
+                <h1 className="text-2xl font-bold mb-4">Manage grammatical structures for grammar: {grammar.name}</h1>
 
                 <GrammaticalStructureForm
                     grammarId={+grammarId!}
