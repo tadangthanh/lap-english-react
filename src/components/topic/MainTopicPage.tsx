@@ -205,6 +205,33 @@ const MainTopicPage: React.FC = () => {
       }
     );
   };
+  const [typeMainTopicSearch, setTypeMainTopicSearch] = useState<string>("all");
+  const handleChangeType = (e: any) => {
+    setTypeMainTopicSearch(e.target.value);
+    let type;
+    if (e.target.value === "all") {
+      type = "";
+    } else {
+      if (e.target.value === "word") {
+        type = `isWord:true`;
+      }
+      else {
+        type = `isWord:false`;
+      }
+    }
+    getMainTopicPage(page, size, sortBy, direction, type)
+      .then((response: any) => {
+        if (response.status === 200) {
+          setMainTopics(response.data.items);
+          setPageResponse(response.data);
+        } else {
+          toast.error(response.message, { containerId: "main-topic" });
+        }
+      })
+      .catch((error) => {
+        toast.error(error.message, { containerId: "main-topic" });
+      });
+  }
   return (
     <DataContext.Provider value={{ size, handleChangePageSize }}>
       <div className="p-4 transform transition-transform scale-100">
@@ -263,6 +290,14 @@ const MainTopicPage: React.FC = () => {
             <option value="asc">Sort</option>
             <option value="asc">a-z</option>
             <option value="desc">z-a</option>
+          </select>
+          <select
+            className="p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500 mr-4"
+            onChange={handleChangeType}
+          >
+            <option value="all">Type</option>
+            <option value="sentence">Sentence</option>
+            <option value="word">Word</option>
           </select>
           <div className="flex items-center">
             <input
