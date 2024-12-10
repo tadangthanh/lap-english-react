@@ -47,6 +47,8 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
     const [example, setExample] = useState<string>('');
     const [subTopicIdMdl, setSubTopicIdMdl] = useState<number>(0);
     const [fileImport, setFileImport] = useState<File | null>(null);
+    const [selectedTypes, setSelectedTypes] = useState<WordType[]>([]);
+
     useEffect(() => {
         if (subTopicId) {
             setSubTopicIdMdl(parseInt(subTopicId));
@@ -101,7 +103,8 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
         // ví dụ: word~abc (tìm từ vựng chứa abc)
 
         setWordSearch("subTopic.id:" + subTopicId + "," + searchField + searchOperation + searchValue);
-    }, [searchField, searchOperation, searchValue]);
+    }, [searchField, searchOperation, searchValue,selectedTypes]);
+
     const [isShowForm, setIsShowForm] = useState(false);
     const handleDeleteWord = (id: number) => {
         deleteWord(id).then((response: any) => {
@@ -205,6 +208,16 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
         }
         setSearchValue(e.target.value);
     }
+
+
+
+    const handleCheckboxChange = (type: WordType) => {
+        setSelectedTypes((prev) =>
+            prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+        );
+    };
+
+
     // tìm kiếm theo word
     const handleSearchByName = () => {
         setPage(0);
@@ -452,29 +465,56 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
 
 
                 {/* Sắp xếp và tìm kiếm */}
-                <div className="flex items-center mt-4 space-x-4">
-                    <select
-                        className="p-2 border rounded"
-                        onChange={handleChangeSort}
-                    >
-                        <option value="asc">Sort</option>
-                        <option value="asc">A-Z</option>
-                        <option value="desc">Z-A</option>
-                    </select>
-                    <div className="flex items-center">
-                        <input
-                            value={searchValue}
-                            type="text"
-                            placeholder="Search word"
-                            className="p-2 border rounded mr-2"
-                            onChange={handleInputSearchChange}
-                        />
-                        <button
-                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                            onClick={handleSearchByName}
-                        >
-                            Search
-                        </button>
+                <div className="flex flex-col mt-4 space-y-4">
+                    {/* Sort and Search Input */}
+                    <div className="flex items-center space-x-4">
+                        <select className="p-2 border rounded" onChange={handleChangeSort}>
+                            <option value="asc">Sort</option>
+                            <option value="asc">A-Z</option>
+                            <option value="desc">Z-A</option>
+                        </select>
+                        <div className="flex items-center">
+                            <input
+                                value={searchValue}
+                                type="text"
+                                placeholder="Search word"
+                                className="p-2 border rounded mr-2"
+                                onChange={handleInputSearchChange}
+                            />
+                            <button
+                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                                onClick={handleSearchByName}
+                            >
+                                Search
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Checkboxes */}
+                    <div className="flex flex-wrap items-center space-x-4">
+                        {[
+                            "NOUN",
+                            "VERB",
+                            "ADJECTIVE",
+                            "ADVERB",
+                            "PREPOSITION",
+                            "CONJUNCTION",
+                            "INTERJECTION",
+                            "PRONOUN",
+                            "DETERMINER",
+                            "EXCLAMATION",
+                        ].map((type) => (
+                            <label key={type} className="flex items-center space-x-2">
+                                <input
+                                    type="checkbox"
+                                    value={type}
+                                    checked={selectedTypes.includes(type as WordType)}
+                                    onChange={() => handleCheckboxChange(type as WordType)}
+                                    className="h-4 w-4 text-blue-500"
+                                />
+                                <span className="text-gray-700">{type}</span>
+                            </label>
+                        ))}
                     </div>
                 </div>
 
