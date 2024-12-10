@@ -47,7 +47,7 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
     const [example, setExample] = useState<string>('');
     const [subTopicIdMdl, setSubTopicIdMdl] = useState<number>(0);
     const [fileImport, setFileImport] = useState<File | null>(null);
-    const [selectedTypes, setSelectedTypes] = useState<WordType[]>([]);
+    const [selectedType, setSelectedType] = useState<String>("ALL");
 
     useEffect(() => {
         if (subTopicId) {
@@ -99,12 +99,25 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
 
     // nếu thay đổi searchField, searchOperation, searchValue thì cập nhật lại wordSearch
     useEffect(() => {
-        //word search là kết hợp của 3 trường search
-        // ví dụ: word~abc (tìm từ vựng chứa abc)
-
         setWordSearch("subTopic.id:" + subTopicId + "," + searchField + searchOperation + searchValue);
-    }, [searchField, searchOperation, searchValue,selectedTypes]);
-
+    }, [searchField, searchOperation, searchValue]);
+    useEffect(() => {
+        if (selectedType === "ALL") {
+            getWordPage(page, 10, sortBy, direction, "subTopic.id:" + subTopicId + "," + searchField + searchOperation + searchValue).then((response) => {
+                if (response.status === 200) {
+                    setWords(response.data.items);
+                    setPageResponse(response.data);
+                }
+            });
+            return;
+        }
+        getWordPage(page, 10, sortBy, direction, "subTopic.id:" + subTopicId + "," + searchField + searchOperation + searchValue + ",type:" + selectedType).then((response) => {
+            if (response.status === 200) {
+                setWords(response.data.items);
+                setPageResponse(response.data);
+            }
+        });
+    }, [selectedType]);
     const [isShowForm, setIsShowForm] = useState(false);
     const handleDeleteWord = (id: number) => {
         deleteWord(id).then((response: any) => {
@@ -212,9 +225,7 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
 
 
     const handleCheckboxChange = (type: WordType) => {
-        setSelectedTypes((prev) =>
-            prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
-        );
+        setSelectedType(type);
     };
 
 
@@ -491,8 +502,9 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
                     </div>
 
                     {/* Checkboxes */}
-                    <div className="flex flex-wrap items-center space-x-4">
+                    <div className="flex flex-wrap items-center space-x-3 fz">
                         {[
+                            "ALL",
                             "NOUN",
                             "VERB",
                             "ADJECTIVE",
@@ -504,11 +516,11 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
                             "DETERMINER",
                             "EXCLAMATION",
                         ].map((type) => (
-                            <label key={type} className="flex items-center space-x-2">
+                            <label key={type} className="flex items-center space-x-2 text-sm">
                                 <input
-                                    type="checkbox"
+                                    type="radio"
                                     value={type}
-                                    checked={selectedTypes.includes(type as WordType)}
+                                    checked={selectedType === type} // Chỉ checked khi trùng với selectedType
                                     onChange={() => handleCheckboxChange(type as WordType)}
                                     className="h-4 w-4 text-blue-500"
                                 />

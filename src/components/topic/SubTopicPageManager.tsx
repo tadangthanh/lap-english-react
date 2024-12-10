@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { MainTopic } from "../../modal/MainTopic";
 import MainTopicSelect from "./MainTopicSelect";
-import { getAllMainTopic } from "../../api/maintopic/MainTopicApi";
+import { getAllMainTopic, getAllMainTopicIsSentence, getAllMainTopicIsWord } from "../../api/maintopic/MainTopicApi";
 import { toast, ToastContainer } from "react-toastify";
 import { SubTopicManagerTable } from "./SubTopicManagerTable";
 import { SubTopic } from "../../modal/SubTopic";
@@ -89,18 +89,33 @@ export const SubTopicPageManager: React.FC = () => {
       });
   }, [page, size, direction]);
   useEffect(() => {
-    getAllMainTopic()
-      .then((response: any) => {
-        if (response.status === 200) {
-          setMainTopics(response.data);
-        } else {
-          toast.error(response.message, { containerId: "sub-topic" });
-        }
-      })
-      .catch((error) => {
-        toast.error(error.message, { containerId: "sub-topic" });
-      });
-  }, []);
+    if (typeSubTopic === "word") {
+      getAllMainTopicIsWord()
+        .then((response: any) => {
+          if (response.status === 200) {
+            setMainTopics(response.data);
+          } else {
+            toast.error(response.message, { containerId: "sub-topic" });
+          }
+        })
+        .catch((error) => {
+          toast.error(error.message, { containerId: "sub-topic" });
+        });
+    } else {
+      getAllMainTopicIsSentence()
+        .then((response: any) => {
+          if (response.status === 200) {
+            setMainTopics(response.data);
+          } else {
+            toast.error(response.message, { containerId: "sub-topic" });
+          }
+        })
+        .catch((error) => {
+          toast.error(error.message, { containerId: "sub-topic" });
+        });
+    }
+
+  }, [typeSubTopic]);
   // Xử lý khi người dùng chọn ảnh
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (subTopicEdit?.blobName) {

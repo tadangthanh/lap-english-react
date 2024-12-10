@@ -7,6 +7,12 @@ export const getMainTopicPage = async (page = 0, size = 10, sortBy?: String, dir
 export const getAllMainTopic = async () => {
     return await get(`${apiUrl}/main-topic/list`);
 }
+export const getAllMainTopicIsWord = async () => {
+    return await get(`${apiUrl}/main-topic/list/word`);
+}
+export const getAllMainTopicIsSentence = async () => {
+    return await get(`${apiUrl}/main-topic/list/sentence`);
+}
 export const createMainTopic = async (mainTopic: MainTopic) => {
     return await post(`${apiUrl}/main-topic`, 0, mainTopic);
 }
