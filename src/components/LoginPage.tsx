@@ -5,14 +5,14 @@ import 'react-toastify/dist/ReactToastify.css';
 import { login } from "../api/AuthenticationApi";
 import { Loading } from "./common/LoadingSpinner";
 const Login: React.FC = () => {
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const handleSubmit = async (e: any) => {
         setLoading(true);
         e.preventDefault();
         try {
-            const request = { username: username, password };
+            const request = { email: email, password };
             const response = await login(request);
             if (response.status === 200) {
                 console.log(response.data);
@@ -46,15 +46,15 @@ const Login: React.FC = () => {
                     <h2 className="text-center mb-4">Login</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="mb-3">
-                            <label htmlFor="username" className="form-label">
-                                Username
+                            <label htmlFor="email" className="form-label">
+                                Email
                             </label>
                             <input
                                 type="text"
                                 className="form-control"
-                                id="username"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                id="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
                         <div className="mb-3">
