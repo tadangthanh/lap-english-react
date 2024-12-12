@@ -27,8 +27,8 @@ export const TableMainTopic: React.FC<TableMainTopicProps> = ({ mainTopics, page
                     <tr>
                         <th className="px-4 py-3 border-b text-left text-xs font-semibold">ID</th>
                         <th className="px-4 py-3 border-b text-left text-xs font-semibold">Name</th>
-                        <th className="px-4 py-3 border-b text-left text-xs font-semibold">Created Date</th>
-                        <th className="px-4 py-3 border-b text-left text-xs font-semibold">Last Modified Date</th>
+                        <th className="px-4 py-3 border-b text-left text-xs font-semibold">Diamond</th>
+                        <th className="px-4 py-3 border-b text-left text-xs font-semibold">Gold</th>
                         <th className="px-4 py-3 border-b text-left text-xs font-semibold">Actions</th>
                     </tr>
                 </thead>
@@ -45,10 +45,10 @@ export const TableMainTopic: React.FC<TableMainTopicProps> = ({ mainTopics, page
                                 <td className="px-4 py-3 text-sm text-gray-600">{topic.id}</td>
                                 <td className="px-4 py-3 text-sm font-medium text-gray-800">{topic.name}</td>
                                 <td className="px-4 py-3 text-sm text-gray-500">
-                                    {new Date(topic.createdAt).toLocaleDateString()}
+                                    {topic.diamond}
                                 </td>
                                 <td className="px-4 py-3 text-sm text-gray-500">
-                                    {new Date(topic.updatedAt).toLocaleDateString()}
+                                    {topic.gold}
                                 </td>
 
                                 {/* Actions */}

@@ -29,6 +29,8 @@ const MainTopicPage: React.FC = () => {
   const [sortBy, setSortBy] = useState<string>("name");
   const [searchField, setSearchField] = useState<string>("name");
   const [typeMainTopic, setTypeMainTopic] = useState<string>("word");
+  const [diamond, setDiamond] = useState<number>(0);
+  const [gold, setGold] = useState<number>(0);
   const [searchOperation, setSearchOperation] = useState<SearchOperation>(
     SearchOperation.LIKE
   );
@@ -78,6 +80,8 @@ const MainTopicPage: React.FC = () => {
     if (mainTopicEdit) {
       setMainTopicName(mainTopicEdit.name);
       setTypeMainTopic(mainTopicEdit.word ? "word" : "sentence");
+      setDiamond(mainTopicEdit.diamond);
+      setGold(mainTopicEdit.gold);
     } else {
       setMainTopicName("");
     }
@@ -101,6 +105,8 @@ const MainTopicPage: React.FC = () => {
       id: 0,
       name: mainTopicName,
       word: typeMainTopic === "word" ? true : false,
+      diamond: diamond,
+      gold: gold,
       createdAt: new Date(),
       updatedAt: new Date(),
       updatedBy: "",
@@ -133,6 +139,8 @@ const MainTopicPage: React.FC = () => {
         id: mainTopicEdit.id,
         name: mainTopicName,
         word: typeMainTopic === "word" ? true : false,
+        diamond: diamond,
+        gold: gold,
         createdAt: mainTopicEdit.createdAt,
         updatedAt: new Date(),
         updatedBy: "",
@@ -260,6 +268,31 @@ const MainTopicPage: React.FC = () => {
               setError("");
             }}
           />
+          <div className="mb-4 flex items-center space-x-2">
+            <label className="font-medium text-gray-700">Diamond:</label>
+            <div className="relative flex items-center">
+              <input
+                type="number"
+                value={diamond || 0}
+                onChange={(e) => setDiamond(parseInt(e.target.value))}
+                className="w-24 px-3 py-1.5 text-sm text-gray-700 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+              <i className="fa-regular fa-gem absolute right-2 text-gray-400"></i>
+            </div>
+          </div>
+
+          <div className="mb-4 flex items-center space-x-2">
+            <label className="font-medium text-gray-700">Gold:</label>
+            <div className="relative flex items-center">
+              <input
+                type="number"
+                value={gold || 0}
+                onChange={(e) => setGold(parseInt(e.target.value))}
+                className="w-24 px-3 py-1.5 text-sm text-gray-700 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+              />
+              <i className="fa-solid fa-coins  absolute right-2 text-gray-400"></i>
+            </div>
+          </div>
           <div className="mb-4">Type: <select value={typeMainTopic} onChange={(e) => setTypeMainTopic(e.target.value)} name="typeMainTopic" id="typeMainTopic">
             <option value="word">Word</option>
             <option value="sentence">Sentence</option>

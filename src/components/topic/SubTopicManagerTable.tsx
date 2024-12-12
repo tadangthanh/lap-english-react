@@ -51,8 +51,8 @@ export const SubTopicManagerTable: React.FC<TableSubTopicProps> = ({
                         <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 uppercase">Image Preview</th>
                         <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 uppercase">Main Topic</th>
                         <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 uppercase">Total Word</th>
-                        <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 uppercase">Created Date</th>
-                        <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 uppercase">Last Modified</th>
+                        <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 uppercase">Diamond</th>
+                        <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 uppercase">Gold</th>
                         <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 uppercase">Actions</th>
                     </tr>
                 </thead>
@@ -78,10 +78,10 @@ export const SubTopicManagerTable: React.FC<TableSubTopicProps> = ({
                                 <td className="px-4 py-3 text-sm text-gray-600">{topic.mainTopicName}</td>
                                 <td className="px-4 py-3 text-sm text-gray-600">{topic.wordCount}</td>
                                 <td className="px-4 py-3 text-sm text-gray-600">
-                                    {new Date(topic.createdAt).toLocaleDateString()}
+                                    {topic.diamond}
                                 </td>
                                 <td className="px-4 py-3 text-sm text-gray-600">
-                                    {new Date(topic.updatedAt).toLocaleDateString()}
+                                    {topic.gold}
                                 </td>
                                 <td className="px-4 py-3 text-sm flex items-center space-x-2">
                                     {subTopicEdit?.id !== topic.id ? (

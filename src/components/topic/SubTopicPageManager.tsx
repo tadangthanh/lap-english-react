@@ -42,6 +42,8 @@ export const SubTopicPageManager: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [typeSubTopicAdd, setTypeSubTopicAdd] = useState<string>("word");
   const [typeSubTopicSearch, setTypeSubTopicSearch] = useState<string>("all");
+  const [diamond, setDiamond] = useState<number>(0);
+  const [gold, setGold] = useState<number>(0);
   const navigate = useNavigate();
   useEffect(() => {
     setSubTopicSearch(searchField + searchOperation + searchValue);
@@ -180,7 +182,8 @@ export const SubTopicPageManager: React.FC = () => {
       word: typeSubTopicAdd === "word" ? true : false,
       mainTopicId: mainTopicIdSelected,
       mainTopicName: "",
-      // wordCount: 0,
+      diamond: diamond,
+      gold: gold,
       createdAt: new Date(),
       updatedAt: new Date(),
       updatedBy: "",
@@ -209,11 +212,19 @@ export const SubTopicPageManager: React.FC = () => {
       setSubTopicName(subTopicEdit.name);
       setTypeSubTopicAdd(subTopicEdit.word ? "word" : "sentence");
       setMainTopicIdSelected(subTopicEdit.mainTopicId);
+      setDiamond(subTopicEdit.diamond);
+      setGold(subTopicEdit.gold);
+      const imagePreviewUrl = subTopicEdit.blobName ? baseUrlBlob + subTopicEdit.blobName : null;
+      setImagePreview(imagePreviewUrl);
     } else {
       setSubTopicName("");
+      clearForm();
       setMainTopicIdSelected(-1);
     }
+    setIsShowForm(true);
   }, [subTopicEdit]);
+
+
   const handleSelectMainTopic = (mainTopic?: MainTopic) => {
     if (mainTopic) {
       setMainTopicIdSelected(mainTopic.id);
@@ -233,6 +244,9 @@ export const SubTopicPageManager: React.FC = () => {
           ...subTopicEdit,
           name: subTopicName,
           word: typeSubTopicAdd === "word" ? true : false,
+          mainTopicId: mainTopicIdSelected,
+          diamond: diamond,
+          gold: gold
         },
         file ?? undefined
       ).then((response: any) => {
@@ -255,6 +269,7 @@ export const SubTopicPageManager: React.FC = () => {
         }
       });
     }
+    clearForm();
     setFile(null);
   };
   const handleSearchByName = () => {
@@ -300,6 +315,9 @@ export const SubTopicPageManager: React.FC = () => {
     setSubTopicName("");
     setMainTopicIdSelected(-1);
     setSubTopicEdit(null);
+    setDiamond(0);
+    setGold(0);
+    setImagePreview(null);
     handleClearImageInput();
   };
 
@@ -374,6 +392,33 @@ export const SubTopicPageManager: React.FC = () => {
                   isRequired={true}
                   idMainTopicSelected={mainTopicIdSelected}
                 />
+                <div className="mb-4 flex items-center space-x-2">
+                  <label className="font-medium text-gray-700">Diamond:</label>
+                  <div className="relative flex items-center">
+                    <input
+                      type="number"
+                      value={diamond || 0}
+                      onChange={(e) => setDiamond(parseInt(e.target.value))}
+                      className="w-24 px-3 py-1.5 text-sm text-gray-700 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <i className="fa-regular fa-gem absolute right-2 text-gray-400"></i>
+                  </div>
+                </div>
+
+                <div className="mb-4 flex items-center space-x-2">
+                  <label className="font-medium text-gray-700">Gold:</label>
+                  <div className="relative flex items-center">
+                    <input
+                      type="number"
+                      value={gold || 0}
+                      onChange={(e) => setGold(parseInt(e.target.value))}
+                      className="w-24 px-3 py-1.5 text-sm text-gray-700 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                    />
+                    <i className="fa-solid fa-coins  absolute right-2 text-gray-400"></i>
+                  </div>
+                </div>
+
+
               </div>
               <div className="mb-4">Type: <select value={typeSubTopicAdd} onChange={(e) => setTypeSubTopicAdd(e.target.value)} name="typeSubTopic" id="typeSubTopic">
                 <option value="word">Word</option>
@@ -414,7 +459,7 @@ export const SubTopicPageManager: React.FC = () => {
             onClick={() => setIsShowForm(true)}
             className="mb-3 bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600"
           >
-            Add New SubTopic <i className="fas fa-plus ml-2"></i>
+            {subTopicEdit == null ? <div>Add New SubTopic <i className="fas fa-plus ml-2"></i></div> : <div>Edit SubTopic <i className="fas fa-edit ml-2"></i></div>}
           </button>
         )}
 
