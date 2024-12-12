@@ -7,7 +7,7 @@ import { Word } from "../../modal/Word";
 import { PageResponse } from "../../modal/PageResponse";
 import { SearchOperation } from "../../modal/SearchOperation";
 import { baseUrlBlob, verifyToken } from "../../api/ApiUtils";
-import { createWord, deleteWord, getWordPage, importWordExcel } from "../../api/word/WordApi";
+import { createWord, deleteWord, getWordPage, importWordExcel, updateWord } from "../../api/word/WordApi";
 import { toast, ToastContainer } from "react-toastify";
 import { Loading } from "../common/LoadingSpinner";
 import { DataContext } from '../context/DataContext';
@@ -34,7 +34,7 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
     const [wordSearch, setWordSearch] = useState<string>('subTopic.id:' + subTopicId);
     const [isLoading, setIsLoading] = useState(false);
     const [searchOperation, setSearchOperation] = useState<SearchOperation>(SearchOperation.LIKE);
-    const [file, setFile] = useState<File | null>(null);
+    const [file, setFile] = useState<File | undefined>(undefined);
     const fileInputRef = useRef<HTMLInputElement | null>(null); // Ref cho input ảnh\
     const [imagePreview, setImagePreview] = useState<string | null>(null);
 
@@ -48,6 +48,7 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
     const [subTopicIdMdl, setSubTopicIdMdl] = useState<number>(0);
     const [fileImport, setFileImport] = useState<File | null>(null);
     const [selectedType, setSelectedType] = useState<String>("ALL");
+    const [wordEdit, setWordEdit] = useState<Word | null>(null);
 
     useEffect(() => {
         if (subTopicId) {
@@ -154,8 +155,11 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
     }
     // Xử lý khi người dùng xóa ảnh và reset input
     const handleImageDelete = () => {
-        setFile(null);
+        setFile(undefined);
         setImagePreview(null);
+        if (wordEdit) {
+            wordEdit.imageBlobName = '';
+        }
         if (fileInputRef.current) {
             fileInputRef.current.value = ''; // Đặt lại giá trị của input file
         }
@@ -169,10 +173,11 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
         setType(WordType.NOUN);
         setLevel(WordLevel.A1);
         setExample('');
-        setFile(null);
+        setFile(undefined);
         setImagePreview(null);
         handleClearImageInput();
         setFileImport(null);
+        setWordEdit(null);
     }
     // xử lý thêm từ mới
     const handleAddWord = (event: React.FormEvent<HTMLFormElement>) => {
@@ -227,8 +232,58 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
     const handleCheckboxChange = (type: WordType) => {
         setSelectedType(type);
     };
-
-
+    useEffect(() => {
+        setWord(wordEdit?.word ?? '');
+        setMeaning(wordEdit?.meaning ?? '');
+        setPronounceUK(wordEdit?.pronounceUK ?? '');
+        setPronounceUS(wordEdit?.pronounceUS ?? '');
+        setType(wordEdit?.type ?? WordType.NOUN);
+        setLevel(wordEdit?.level ?? WordLevel.A1);
+        setExample(wordEdit?.example ?? '');
+        const imageUrl = wordEdit?.imageBlobName ? baseUrlBlob + wordEdit?.imageBlobName : null;
+        setImagePreview(imageUrl);
+    }, [wordEdit]);
+    const handleUpdateWord = (e: any) => {
+        e.preventDefault();
+        if (wordEdit) {
+            updateWord({
+                id: wordEdit.id,
+                word,
+                meaning,
+                pronounceUK,
+                pronounceUS,
+                type,
+                level,
+                example,
+                subTopicId: subTopicIdMdl,
+                subTopicName: '',
+                audioUkBlobName: wordEdit.audioUkBlobName,
+                audioUsBlobName: wordEdit.audioUsBlobName,
+                imageBlobName: wordEdit.imageBlobName,
+                createdAt: wordEdit.createdAt,
+                createdBy: wordEdit.createdBy,
+                updatedAt: new Date(),
+                updatedBy: wordEdit.updatedBy
+            }, file).then((response: any) => {
+                if (response.status === 200) {
+                    toast.success(response.message, { containerId: 'word' });
+                    setWords((prev) => prev.map((word) => {
+                        if (word.id === response.data.id) {
+                            return response.data;
+                        }
+                        return word;
+                    }));
+                    clearForm();
+                    handleImageDelete();
+                    setPage(0);
+                    setIsShowForm(false);
+                } else {
+                    toast.error(response.message, { containerId: 'word' });
+                }
+            });
+            clearForm();
+        }
+    }
     // tìm kiếm theo word
     const handleSearchByName = () => {
         setPage(0);
@@ -276,6 +331,7 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
         <strong>Type:</strong> One of the following values: NOUN, VERB, ADJECTIVE, ADVERB, PREPOSITION, CONJUNCTION, INTERJECTION, PRONOUN, DETERMINER, EXCLAMATION. <br />
         <strong>Level:</strong> One of the following values: A1, A2, B1, B2, C1, C2.
     `;
+
     return (
         <DataContext.Provider value={{ size, handleChangePageSize }}>
             <div className="container mx-auto mt-4 p-4">
@@ -289,7 +345,9 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
                         onClick={() => setIsShowForm(true)}
                         className="mb-3 bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600"
                     >
-                        Add New Word <i className="fas fa-plus ml-2"></i>
+                        {wordEdit === null ? <div>Add New Word <i className="fas fa-plus ml-2"></i></div> : <div>
+                            Edit Word <i className="fas fa-pen ml-2"></i>
+                        </div>}
                     </button>
                 )}
 
@@ -444,13 +502,19 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
 
                             {/* Nút Submit */}
                             <div className="mt-4 flex space-x-4">
-                                <button
+                                {wordEdit === null ? <button
                                     type="submit"
                                     className="bg-green-500 text-white px-4 py-2 rounded shadow hover:bg-green-600"
                                     onClick={(e: any) => handleAddWord(e)}
                                 >
                                     Save Word
-                                </button>
+                                </button> : <button
+                                    type="submit"
+                                    className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-grey-600"
+                                    onClick={(e: any) => (handleUpdateWord(e))}
+                                >
+                                    Update
+                                </button>}
                                 <button
                                     onClick={() => {
                                         clearForm();
@@ -532,6 +596,8 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
 
                 <WordManagerTable
                     words={words}
+                    wordEdit={wordEdit}
+                    setWordEdit={setWordEdit}
                     handleDeleteWord={handleDeleteWord}
                     page={page}
                     setPage={setPage}

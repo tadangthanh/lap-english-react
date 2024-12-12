@@ -43,67 +43,64 @@ export const SubTopicManagerTable: React.FC<TableSubTopicProps> = ({
 
     return (
         <div className="overflow-x-auto mt-4">
-            <table className="min-w-full bg-white border border-gray-300 rounded shadow">
-                <thead className="bg-gray-100">
+            <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+                <thead className="bg-gradient-to-r from-gray-100 to-gray-200">
                     <tr>
-                        <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-600">ID</th>
-                        <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-600">Name</th>
-                        <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-600">Image preview</th>
-                        <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-600">Main Topic</th>
-                        <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-600">Total word</th>
-                        <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-600">Created date</th>
-                        <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-600">Last modified date</th>
-                        <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-600">Actions</th>
+                        <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 uppercase">ID</th>
+                        <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 uppercase">Name</th>
+                        <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 uppercase">Image Preview</th>
+                        <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 uppercase">Main Topic</th>
+                        <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 uppercase">Total Word</th>
+                        <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 uppercase">Created Date</th>
+                        <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 uppercase">Last Modified</th>
+                        <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 uppercase">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-gray-200">
                     {subTopics.length > 0 ? (
                         subTopics.map((topic) => (
-                            <tr key={topic.id} className="hover:bg-gray-50">
-                                <td
-                                    className={`px-4 py-2 border-b ${subTopicEdit?.id === topic.id ? "bg-gray-200" : "bg-white"
-                                        }`}
-                                >
-                                    {topic.id}
-                                </td>
-                                <td
-                                    className={`px-4 py-2 border-b ${subTopicEdit?.id === topic.id ? "bg-gray-200" : "bg-white"
-                                        }`}
-                                >
-                                    {topic.name}
-                                </td>
-                                <td className="px-4 py-2 border-b">
+                            <tr
+                                key={topic.id}
+                                className="hover:bg-gray-50 transition duration-150 ease-in-out"
+                            >
+                                <td className="px-4 py-3 text-sm text-gray-600">{topic.id}</td>
+                                <td className="px-4 py-3 text-sm text-gray-600">{topic.name}</td>
+                                <td className="px-4 py-3 text-center">
                                     {topic.blobName && (
                                         <img
                                             src={baseUrlBlob + topic.blobName}
                                             alt={topic.name}
-                                            className="w-12 h-12 cursor-pointer rounded"
+                                            className="w-12 h-12 object-cover rounded-lg cursor-pointer hover:scale-110 transition-transform"
                                             onClick={() => handleImageClick(baseUrlBlob + topic.blobName)}
                                         />
                                     )}
                                 </td>
-                                <td className="px-4 py-2 border-b">{topic.mainTopicName}</td>
-                                <td className="px-4 py-2 border-b">{topic.wordCount}</td>
-                                <td className="px-4 py-2 border-b">{new Date(topic.createdAt).toLocaleDateString()}</td>
-                                <td className="px-4 py-2 border-b">{new Date(topic.updatedAt).toLocaleDateString()}</td>
-                                <td className="px-4 py-2 border-b flex items-center space-x-2">
+                                <td className="px-4 py-3 text-sm text-gray-600">{topic.mainTopicName}</td>
+                                <td className="px-4 py-3 text-sm text-gray-600">{topic.wordCount}</td>
+                                <td className="px-4 py-3 text-sm text-gray-600">
+                                    {new Date(topic.createdAt).toLocaleDateString()}
+                                </td>
+                                <td className="px-4 py-3 text-sm text-gray-600">
+                                    {new Date(topic.updatedAt).toLocaleDateString()}
+                                </td>
+                                <td className="px-4 py-3 text-sm flex items-center space-x-2">
                                     {subTopicEdit?.id !== topic.id ? (
                                         <button
-                                            className="px-2 py-1 text-sm text-blue-600 bg-gray-200 rounded hover:bg-gray-300"
+                                            className="px-3 py-1 text-xs text-white bg-blue-500 rounded hover:bg-blue-600 transition"
                                             onClick={() => setSubTopicEdit(topic)}
                                         >
                                             Edit <i className="fa-solid fa-pen-to-square ml-1"></i>
                                         </button>
                                     ) : (
                                         <button
-                                            className="px-2 py-1 text-sm text-yellow-600 bg-yellow-200 rounded hover:bg-yellow-300"
+                                            className="px-3 py-1 text-xs text-white bg-yellow-500 rounded hover:bg-yellow-600 transition"
                                             onClick={() => setSubTopicEdit(null)}
                                         >
                                             Cancel
                                         </button>
                                     )}
                                     <button
-                                        className="px-2 py-1 text-sm text-red-600 bg-red-200 rounded hover:bg-red-300"
+                                        className="px-3 py-1 text-xs text-white bg-red-500 rounded hover:bg-red-600 transition"
                                         onClick={() => {
                                             setShowModal(true);
                                             setSubTopicId(topic.id);
@@ -113,7 +110,7 @@ export const SubTopicManagerTable: React.FC<TableSubTopicProps> = ({
                                     </button>
                                     <a
                                         href="#"
-                                        className="text-blue-600 hover:underline"
+                                        className="text-blue-500 hover:text-blue-700 transition"
                                         onClick={() => handleClickExtractMore(topic.id)}
                                     >
                                         <i className="fa-solid fa-arrow-up-right-from-square"></i>
@@ -123,7 +120,7 @@ export const SubTopicManagerTable: React.FC<TableSubTopicProps> = ({
                         ))
                     ) : (
                         <tr>
-                            <td colSpan={8} className="px-4 py-2 text-center text-gray-500">
+                            <td colSpan={8} className="px-4 py-3 text-center text-gray-500">
                                 No topics yet
                             </td>
                         </tr>
@@ -169,11 +166,12 @@ export const SubTopicManagerTable: React.FC<TableSubTopicProps> = ({
                     <img
                         src={selectedImage}
                         alt="Zoomed"
-                        className="max-w-3/4 max-h-3/4 rounded shadow-lg"
+                        className="max-w-3/4 max-h-3/4 rounded-lg shadow-lg"
                     />
                 </div>
             )}
         </div>
+
     );
 
 };

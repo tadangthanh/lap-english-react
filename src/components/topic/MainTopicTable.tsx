@@ -21,46 +21,55 @@ export const TableMainTopic: React.FC<TableMainTopicProps> = ({ mainTopics, page
     const context = useContext(DataContext);
     return (
         <div className="overflow-x-auto mt-4">
-            <table className="min-w-full bg-white border border-gray-300 rounded">
-                <thead className="bg-gray-100">
+            <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+                {/* Table Header */}
+                <thead className="bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 uppercase">
                     <tr>
-                        <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-600">ID</th>
-                        <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-600">Name</th>
-                        <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-600">Created date</th>
-                        <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-600">Last modified date</th>
-                        <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-600">Actions</th>
+                        <th className="px-4 py-3 border-b text-left text-xs font-semibold">ID</th>
+                        <th className="px-4 py-3 border-b text-left text-xs font-semibold">Name</th>
+                        <th className="px-4 py-3 border-b text-left text-xs font-semibold">Created Date</th>
+                        <th className="px-4 py-3 border-b text-left text-xs font-semibold">Last Modified Date</th>
+                        <th className="px-4 py-3 border-b text-left text-xs font-semibold">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+
+                {/* Table Body */}
+                <tbody className="divide-y divide-gray-200">
                     {mainTopics.length > 0 ? (
                         mainTopics.map((topic) => (
                             <tr
                                 key={topic.id}
-                                className={`${mainTopicEdit?.id === topic.id ? "bg-gray-200" : "bg-white"
-                                    } hover:bg-gray-50`}
+                                className={`${mainTopicEdit?.id === topic.id ? "bg-yellow-50" : "bg-white"} 
+                        hover:bg-gray-50 transition duration-200 ease-in-out`}
                             >
-                                <td className="px-4 py-2 border-b">{topic.id}</td>
-                                <td className="px-4 py-2 border-b">{topic.name}</td>
-                                <td className="px-4 py-2 border-b">{new Date(topic.createdAt).toLocaleDateString()}</td>
-                                <td className="px-4 py-2 border-b">{new Date(topic.updatedAt).toLocaleDateString()}</td>
-                                <td className="px-4 py-2 border-b flex items-center space-x-2">
+                                <td className="px-4 py-3 text-sm text-gray-600">{topic.id}</td>
+                                <td className="px-4 py-3 text-sm font-medium text-gray-800">{topic.name}</td>
+                                <td className="px-4 py-3 text-sm text-gray-500">
+                                    {new Date(topic.createdAt).toLocaleDateString()}
+                                </td>
+                                <td className="px-4 py-3 text-sm text-gray-500">
+                                    {new Date(topic.updatedAt).toLocaleDateString()}
+                                </td>
+
+                                {/* Actions */}
+                                <td className="px-4 py-3 flex items-center space-x-3">
                                     {mainTopicEdit?.id !== topic.id ? (
                                         <button
-                                            className="px-3 py-1 text-sm text-blue-600 bg-gray-200 rounded hover:bg-gray-300"
+                                            className="px-3 py-1 text-xs font-semibold text-white bg-blue-500 rounded hover:bg-blue-600 transition"
                                             onClick={() => setMainTopicEdit(topic)}
                                         >
                                             Edit <i className="fa-solid fa-pen-to-square ml-1"></i>
                                         </button>
                                     ) : (
                                         <button
-                                            className="px-3 py-1 text-sm text-yellow-600 bg-yellow-200 rounded hover:bg-yellow-300"
+                                            className="px-3 py-1 text-xs font-semibold text-white bg-yellow-500 rounded hover:bg-yellow-600 transition"
                                             onClick={() => setMainTopicEdit(null)}
                                         >
                                             Cancel
                                         </button>
                                     )}
                                     <button
-                                        className="px-3 py-1 text-sm text-red-600 bg-red-200 rounded hover:bg-red-300"
+                                        className="px-3 py-1 text-xs font-semibold text-white bg-red-500 rounded hover:bg-red-600 transition"
                                         onClick={() => {
                                             setShowModal(true);
                                             setMainTopicId(topic.id);
@@ -73,7 +82,7 @@ export const TableMainTopic: React.FC<TableMainTopicProps> = ({ mainTopics, page
                         ))
                     ) : (
                         <tr>
-                            <td colSpan={5} className="px-4 py-2 text-center text-gray-500">
+                            <td colSpan={5} className="px-4 py-3 text-center text-gray-500">
                                 No topics yet
                             </td>
                         </tr>
@@ -82,13 +91,15 @@ export const TableMainTopic: React.FC<TableMainTopicProps> = ({ mainTopics, page
             </table>
 
             {/* Pagination */}
-            <div className="mt-4">
-                <Paging page={page} setPage={setPage} pageResponse={pageResponse} />
-            </div>
+            {mainTopics.length > 0 && (
+                <div className="mt-4">
+                    <Paging page={page} setPage={setPage} pageResponse={pageResponse} />
+                </div>
+            )}
 
-            {/* Modal xác nhận xóa */}
+            {/* Confirmation Modal */}
             <ConfirmationModal
-                title="Confirm"
+                title="Confirm Deletion"
                 message="Are you sure you want to delete this topic? This will delete all objects that depend on this topic."
                 labelConfirm="Delete"
                 labelCancel="Cancel"
@@ -101,11 +112,14 @@ export const TableMainTopic: React.FC<TableMainTopicProps> = ({ mainTopics, page
                 onCancel={() => setShowModal(false)}
             />
 
-            {/* Điều chỉnh số lượng hiển thị */}
-            <div className="mt-4">
-                <PageSize size={context.size} handlePageSizeChange={context.handleChangePageSize} />
-            </div>
+            {/* Page size adjustment */}
+            {mainTopics.length > 0 && (
+                <div className="mt-4">
+                    <PageSize size={context.size} handlePageSizeChange={context.handleChangePageSize} />
+                </div>
+            )}
         </div>
+
     );
 
 }
