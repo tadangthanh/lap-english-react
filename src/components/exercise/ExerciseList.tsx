@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ExerciseResponse } from "../../modal/ExerciseResponse";
 import ConfirmationModal from "../common/ConfirmationModal";
+import { baseUrlBlob } from "../../api/ApiUtils";
 
 interface ExerciseListProps {
     exercises: ExerciseResponse[];
@@ -74,7 +75,7 @@ export const ExerciseList: React.FC<ExerciseListProps> = ({ exercises, onDelete 
                                 <td className="px-4 py-2 border">
                                     {exercise.customQuiz.imageQuestion ? (
                                         <img
-                                            src={exercise.customQuiz.imageQuestion}
+                                            src={baseUrlBlob + exercise.customQuiz.imageQuestion}
                                             alt="Câu hỏi"
                                             className="w-16 h-16 object-cover"
                                         />
@@ -97,7 +98,7 @@ export const ExerciseList: React.FC<ExerciseListProps> = ({ exercises, onDelete 
                                                 <p>{answer.answer}</p>
                                                 {answer.imgAnswer && (
                                                     <img
-                                                        src={answer.imgAnswer}
+                                                        src={baseUrlBlob + answer.imgAnswer}
                                                         alt="Answer Image"
                                                         className="w-8 h-8 object-cover"
                                                     />

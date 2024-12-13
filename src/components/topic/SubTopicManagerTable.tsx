@@ -48,7 +48,7 @@ export const SubTopicManagerTable: React.FC<TableSubTopicProps> = ({
                     <tr>
                         <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 uppercase">ID</th>
                         <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 uppercase">Name</th>
-                        <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 uppercase">Image Preview</th>
+                        <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 uppercase">Image</th>
                         <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 uppercase">Main Topic</th>
                         <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 uppercase">Total Word</th>
                         <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 uppercase">Diamond</th>

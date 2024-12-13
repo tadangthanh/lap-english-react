@@ -93,10 +93,23 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ grammaticalStructureId, set
         imageQuestionRef.current!.value = "";
         questionRef.current!.value = "";
     }
+    const isExistEmptyAnswer = () => {
+        return answers.some((answer) => answer.answer === "") || answers.length === 0;
+    }
+    const isExistAnswerCorrect = () => {
+        return answers.some((answer) => answer.correct);
+    }
     const handleAddQuiz = () => {
+        if (isExistEmptyAnswer()) {
+            alert("Please fill all answers");
+            return;
+        }
+        if (!isExistAnswerCorrect()) {
+            alert("Please choose at least one correct answer");
+            return;
+        }
         customQuizRequest.quizAnswers = answers;
         exerciseGrammarRequest.customQuiz = customQuizRequest;
-        console.log("exerciseGrammarRequest", exerciseGrammarRequest);
         createExercise(exerciseGrammarRequest)
             .then((res) => {
                 if (res.status === 201) {
