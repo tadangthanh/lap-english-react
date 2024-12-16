@@ -12,6 +12,7 @@ import { TypeGrammarPage } from './components/typeGrammar/TypeGrammarPage';
 import { GrammarPage } from './components/grammar/GrammarPage';
 import { GrammaticalStructurePage } from './components/grammaticalStructure/GrammaticalStructurePage';
 import { ExercisePage } from './components/exercise/ExercisePage';
+import TaskManager from './components/task/TaskManager';
 
 const AppLayout: React.FC = () => {
   const location = useLocation();
@@ -45,6 +46,7 @@ const AppLayout: React.FC = () => {
               <Route path="/type-grammar/:typeId/grammar/:grammarId/grammatical-structure" element={<GrammaticalStructurePage />} />
               <Route path="/type-grammar/:typeId/grammar/:grammarId/grammatical-structure/:grammaticalStructureId/exercises-management" element={<ExercisePage />} />
               <Route path="/sub-topic/:subTopicId" element={<HeaderWithTabs />} />
+              <Route path="/task" element={<TaskManager />} />
               <Route path="/sub-topic" element={<SubTopicPageManager />} />
             </Routes>
           </div>

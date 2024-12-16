@@ -19,6 +19,14 @@ const menuItems = [
             { to: "/topic", label: "Main Topic" },
             { to: "/sub-topic", label: "Sub Topic" }
         ]
+    },
+    {
+        label: "Daily Task",
+        icon: "fa-solid fa-list-check",
+        children: [
+            // { to: "/grammar", label: "Grammatical Structure" },
+            { to: "/task", label: "Task" }
+        ]
     }
 ];
 
