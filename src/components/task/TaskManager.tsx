@@ -80,6 +80,7 @@ const TaskManager = () => {
             createTask(task).then((response) => {
                 if (response.status === 201) {
                     toast.success(response.message, { containerId: "task" });
+                    console.log(response.data);
                     setTasks([...tasks, response.data]);
                 } else {
                     toast.error(response.message, { containerId: "task" });

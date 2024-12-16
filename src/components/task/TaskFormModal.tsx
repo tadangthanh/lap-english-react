@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Task } from "../../modal/Task";
 import { TypeTask } from "../../modal/TypeTask";
 import { FunTaskQuiz } from "../../modal/FunTaskQuiz";
-import { RewardType } from "../../modal/RewardType";
+import { TypeTaskFor } from "../../modal/TypeTaskFor";
 
 interface TaskFormModalProps {
     task: Task | null;
@@ -18,10 +18,11 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({ task, onSave, onClose }) 
             type: TypeTask.LOGIN,
             keyFunUpdate: FunTaskQuiz.funLearnNewTopicWord, // Default value
             total: 0,
+            taskFor: TypeTaskFor.DAILY,
             reward: {
                 id: 0,
-                rewardType: RewardType.DIAMOND,
-                quantity: 0,
+                gold: 0,
+                diamond: 0,
                 createdAt: new Date(),
                 createdBy: "",
                 updatedAt: new Date(),
@@ -65,6 +66,8 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({ task, onSave, onClose }) 
     const handleSubmit = () => {
         onSave(formData);
     };
+    const [typeTaskFor, setTypeTaskFor] = useState<TypeTaskFor>(TypeTaskFor.DAILY);
+
 
     return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
@@ -81,6 +84,7 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({ task, onSave, onClose }) 
                 />
 
                 {/* Task Type */}
+                Type Task
                 <select
                     name="type"
                     value={formData.type}
@@ -88,6 +92,22 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({ task, onSave, onClose }) 
                     className="w-full border p-2 mb-2"
                 >
                     {Object.values(TypeTask)
+                        .filter((key) => isNaN(Number(key))) // Lọc chỉ lấy key là string
+                        .map((type) => (
+                            <option key={type} value={type}>
+                                {type}
+                            </option>
+                        ))}
+                </select>
+                {/* Task Type */}
+                Task for
+                <select
+                    name="taskFor"
+                    value={typeTaskFor}
+                    onChange={handleChange}
+                    className="w-full border p-2 mb-2"
+                >
+                    {Object.values(TypeTaskFor)
                         .filter((key) => isNaN(Number(key))) // Lọc chỉ lấy key là string
                         .map((type) => (
                             <option key={type} value={type}>
@@ -125,28 +145,32 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({ task, onSave, onClose }) 
                 />
                 {/* Reward Section */}
                 <h3 className="text-lg font-semibold mt-4 mb-2">Reward</h3>
-                <select
-                    name="reward.rewardType"
-                    value={formData.reward.rewardType}
-                    onChange={handleChange}
-                    className="w-full border p-2 mb-2"
-                >
-                    {Object.values(RewardType)
-                        .filter((key) => isNaN(Number(key))) // Lọc chỉ lấy key là string
-                        .map((type) => (
-                            <option key={type} value={type}>
-                                {type}
-                            </option>
-                        ))}
-                </select>
-                <input
-                    name="reward.quantity"
-                    type="number"
-                    placeholder="Quantity"
-                    value={formData.reward.quantity}
-                    onChange={handleChange}
-                    className="w-full border p-2 mb-2"
-                />
+
+                {/* Gold input with icon */}
+                <div className="relative mb-4">
+                    <input
+                        name="reward.gold"
+                        type="number"
+                        placeholder="Gold"
+                        value={formData.reward.gold}
+                        onChange={handleChange}
+                        className="w-full border p-2 pl-10"
+                    />
+                    <i className="absolute right-10 top-3 text-yellow-500 fa fa-coins"></i>
+                </div>
+
+                {/* Diamond input with icon */}
+                <div className="relative mb-4">
+                    <input
+                        name="reward.diamond"
+                        type="number"
+                        placeholder="Diamond"
+                        value={formData.reward.diamond}
+                        onChange={handleChange}
+                        className="w-full border p-2 pl-10"
+                    />
+                    <i className="absolute right-10 top-3 text-blue-500 fa fa-gem"></i>
+                </div>
 
                 {/* Save and Cancel Buttons */}
                 <div className="flex justify-end mt-4">

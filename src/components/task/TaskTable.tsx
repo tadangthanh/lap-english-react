@@ -1,6 +1,5 @@
 import React from "react";
 import { Task } from "../../modal/Task";
-import { RewardType } from "../../modal/RewardType";
 import { PageResponse } from "../../modal/PageResponse";
 import { Paging } from "../common/Paging";
 
@@ -24,6 +23,7 @@ const TaskTable: React.FC<TaskTableProps> = ({ tasks, onEdit, onDelete, page, se
                         <th className="py-2 px-4 border-b">Type</th>
                         <th className="py-2 px-4 border-b">Key Fun Update</th>
                         <th className="py-2 px-4 border-b">Total</th>
+                        <th className="py-2 px-4 border-b">Task for</th>
                         <th className="py-2 px-4 border-b">Reward</th>
                         <th className="py-2 px-4 border-b">Actions</th>
                     </tr>
@@ -35,14 +35,13 @@ const TaskTable: React.FC<TaskTableProps> = ({ tasks, onEdit, onDelete, page, se
                             <td className="py-2 px-4 border-b">{task.type}</td>
                             <td className="py-2 px-4 border-b">{task.keyFunUpdate}</td>
                             <td className="py-2 px-4 border-b">{task.total}</td>
+                            <td className="py-2 px-4 border-b">{task.taskFor}</td>
                             <td className="py-2 px-4 border-b flex items-center space-x-2">
-                                {task.reward?.rewardType == RewardType.DIAMOND && (
-                                    <i className="fas fa-gem text-blue-500"></i>
-                                )}
-                                {task.reward?.rewardType == RewardType.GOLD && (
-                                    <i className="fas fa-coins text-yellow-500"></i>
-                                )}
-                                <span>{task.reward?.quantity}</span>
+                                <i className="fas fa-gem text-blue-500"></i>
+                                <span>{task.reward?.diamond}</span>
+                                <i className="fas fa-coins text-yellow-500"></i>
+                                <span>{task.reward?.gold}</span>
+
                             </td>
 
                             <td className="py-2 px-4 border-b">
