@@ -18,7 +18,6 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({ task, onSave, onClose }) 
             type: TypeTask.LOGIN,
             keyFunUpdate: FunTaskQuiz.funLearnNewTopicWord, // Default value
             total: 0,
-            taskFor: TypeTaskFor.DAILY,
             reward: {
                 id: 0,
                 gold: 0,
@@ -99,23 +98,6 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({ task, onSave, onClose }) 
                             </option>
                         ))}
                 </select>
-                {/* Task Type */}
-                Task for
-                <select
-                    name="taskFor"
-                    value={typeTaskFor}
-                    onChange={handleChange}
-                    className="w-full border p-2 mb-2"
-                >
-                    {Object.values(TypeTaskFor)
-                        .filter((key) => isNaN(Number(key))) // Lọc chỉ lấy key là string
-                        .map((type) => (
-                            <option key={type} value={type}>
-                                {type}
-                            </option>
-                        ))}
-                </select>
-
                 {/* Key Fun Update */}
                 <h3 className="text-lg font-semibold mt-4 mb-2">Key Fun Update</h3>
                 <select

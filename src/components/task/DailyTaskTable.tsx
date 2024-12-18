@@ -2,10 +2,11 @@ import React from "react";
 import { Task } from "../../modal/Task";
 import { PageResponse } from "../../modal/PageResponse";
 import { Paging } from "../common/Paging";
+import { DailyTask } from "../../modal/DailyTask";
 
 
 interface TaskTableProps {
-    tasks: Task[];
+    dailyTasks: DailyTask[];
     onEdit: (task: Task) => void;
     onDelete: (taskId: number) => void;
     page: number;
@@ -13,7 +14,7 @@ interface TaskTableProps {
     pageResponse: PageResponse<Task>;
 }
 
-const TaskTable: React.FC<TaskTableProps> = ({ tasks, onEdit, onDelete, page, setPage, pageResponse }) => {
+const TaskTable: React.FC<TaskTableProps> = ({ dailyTasks, onEdit, onDelete, page, setPage, pageResponse }) => {
     return (
         <div>
             <table className="min-w-full bg-white border border-gray-200">
@@ -23,36 +24,34 @@ const TaskTable: React.FC<TaskTableProps> = ({ tasks, onEdit, onDelete, page, se
                         <th className="py-2 px-4 border-b">Type</th>
                         <th className="py-2 px-4 border-b">Key Fun Update</th>
                         <th className="py-2 px-4 border-b">Total</th>
-                        <th className="py-2 px-4 border-b">Task for</th>
                         <th className="py-2 px-4 border-b">Reward</th>
                         <th className="py-2 px-4 border-b">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {tasks.map((task) => (
-                        <tr key={task.id} className="hover:bg-gray-100">
-                            <td className="py-2 px-4 border-b">{task.description}</td>
-                            <td className="py-2 px-4 border-b">{task.type}</td>
-                            <td className="py-2 px-4 border-b">{task.keyFunUpdate}</td>
-                            <td className="py-2 px-4 border-b">{task.total}</td>
-                            <td className="py-2 px-4 border-b">{task.taskFor}</td>
+                    {dailyTasks.map((dlt) => (
+                        <tr key={dlt.id} className="hover:bg-gray-100">
+                            <td className="py-2 px-4 border-b">{dlt.task.description}</td>
+                            <td className="py-2 px-4 border-b">{dlt.task.type}</td>
+                            <td className="py-2 px-4 border-b">{dlt.task.keyFunUpdate}</td>
+                            <td className="py-2 px-4 border-b">{dlt.task.total}</td>
                             <td className="py-2 px-4 border-b flex items-center space-x-2">
                                 <i className="fas fa-gem text-blue-500"></i>
-                                <span>{task.reward?.diamond}</span>
+                                <span>{dlt.reward?.diamond}</span>
                                 <i className="fas fa-coins text-yellow-500"></i>
-                                <span>{task.reward?.gold}</span>
+                                <span>{dlt.reward?.gold}</span>
 
                             </td>
 
                             <td className="py-2 px-4 border-b">
                                 <button
-                                    onClick={() => onEdit(task)}
+                                    onClick={() => onEdit(dlt.task)}
                                     className="text-blue-500 hover:text-blue-700 mr-2"
                                 >
                                     Edit
                                 </button>
                                 <button
-                                    onClick={() => onDelete(task.id)}
+                                    onClick={() => onDelete(dlt.task.id)}
                                     className="text-red-500 hover:text-red-700"
                                 >
                                     Delete
@@ -66,7 +65,7 @@ const TaskTable: React.FC<TaskTableProps> = ({ tasks, onEdit, onDelete, page, se
             </table>
             {/* Pagination */}
             {
-                tasks.length > 0 && (
+                dailyTasks.length > 0 && (
                     <div className="mt-4">
                         <Paging page={page} setPage={setPage} pageResponse={pageResponse} />
                     </div>

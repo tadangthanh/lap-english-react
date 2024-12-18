@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Task } from "../../modal/Task";
-import TaskTable from "./TaskTable";
-import TaskFormModal from "./TaskFormModal";
+import TaskTable from "./DailyTaskTable";
+import TaskFormModal from "./DailyTaskFormModal";
 import { verifyToken } from "../../api/ApiUtils";
 import { useNavigate } from "react-router-dom";
-import { createTask, deleteTask, getPageTask, updateTask } from "../../api/task/TaskApi";
+import { createDailyTask, deleteDailyTask, getPageDailyTask, updateDailyTask } from "../../api/task/DailyTaskApi";
 import { toast, ToastContainer } from "react-toastify";
 import { PageResponse } from "../../modal/PageResponse";
+import { DailyTask } from "../../modal/DailyTask";
 
 
-const TaskManager = () => {
-    const [tasks, setTasks] = useState<Task[]>([]);
+const DailyTaskManager = () => {
+    const [tasks, setTasks] = useState<DailyTask[]>([]);
     const [showModal, setShowModal] = useState<boolean>(false);
     const [currentTask, setCurrentTask] = useState<Task | null>(null);
     const [page, setPage] = useState<number>(0);
@@ -35,7 +36,7 @@ const TaskManager = () => {
         })
     }, []);
     useEffect(() => {
-        getPageTask(page, size).then((response) => {
+        getPageDailyTask(page, size).then((response) => {
             if (response.status === 200) {
                 setTasks(response.data.items);
                 setPageResponse(response.data);
@@ -55,9 +56,9 @@ const TaskManager = () => {
     };
 
     const handleDeleteTask = (taskId: number) => {
-        deleteTask(taskId).then((response) => {
+        deleteDailyTask(taskId).then((response) => {
             if (response.status === 204) {
-                setTasks(tasks.filter((t) => t.id !== taskId));
+                setTasks(tasks.filter((t) => t.task.id !== taskId));
             } else {
                 toast.error(response.message, { containerId: "task" });
             }
@@ -68,7 +69,7 @@ const TaskManager = () => {
         if (task.id) {
             // Edit task
             // setTasks(tasks.map((t) => (t.id === task.id ? task : t)));
-            updateTask(task).then((response) => {
+            updateDailyTask(task).then((response) => {
                 if (response.status === 200) {
                     const taskNew = response.data;
                     setTasks(tasks.map((t) => (t.id === taskNew.id ? taskNew : t)));
@@ -77,7 +78,7 @@ const TaskManager = () => {
                 }
             });
         } else {
-            createTask(task).then((response) => {
+            createDailyTask(task).then((response) => {
                 if (response.status === 201) {
                     toast.success(response.message, { containerId: "task" });
                     console.log(response.data);
@@ -104,7 +105,7 @@ const TaskManager = () => {
                 </button>
             </div>
             <TaskTable
-                tasks={tasks}
+                dailyTasks={tasks}
                 onEdit={handleEditTask}
                 onDelete={handleDeleteTask}
                 page={page}
@@ -123,4 +124,4 @@ const TaskManager = () => {
     );
 };
 
-export default TaskManager;
+export default DailyTaskManager;

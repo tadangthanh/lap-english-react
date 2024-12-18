@@ -21,11 +21,11 @@ const menuItems = [
         ]
     },
     {
-        label: "Daily Task",
+        label: "Task",
         icon: "fa-solid fa-list-check",
         children: [
             // { to: "/grammar", label: "Grammatical Structure" },
-            { to: "/task", label: "Task" }
+            { to: "/daily-task", label: "Daily Task" }
         ]
     }
 ];
