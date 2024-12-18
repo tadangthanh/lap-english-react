@@ -95,13 +95,13 @@ const DailyTaskManager = () => {
         <div className="container mx-auto p-6">
             <ToastContainer containerId="task" />
 
-            <h1 className="text-3xl font-bold mb-4">Task Manager</h1>
+            <h1 className="text-3xl font-bold mb-4">Daily Task Manager</h1>
             <div className="flex justify-between mb-4">
                 <button
                     onClick={handleAddTask}
                     className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
                 >
-                    Add New Task
+                    Add New Daily Task
                 </button>
             </div>
             <TaskTable

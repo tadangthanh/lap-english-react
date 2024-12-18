@@ -25,7 +25,8 @@ const menuItems = [
         icon: "fa-solid fa-list-check",
         children: [
             // { to: "/grammar", label: "Grammatical Structure" },
-            { to: "/daily-task", label: "Daily Task" }
+            { to: "/daily-task", label: "Daily Task" },
+            { to: "/title-task", label: "Title Task" }
         ]
     }
 ];
