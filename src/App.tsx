@@ -11,9 +11,9 @@ import { WebSocketProvider } from './components/websocket/WebSocketProvider';
 import { TypeGrammarPage } from './components/typeGrammar/TypeGrammarPage';
 import { GrammarPage } from './components/grammar/GrammarPage';
 import { GrammaticalStructurePage } from './components/grammaticalStructure/GrammaticalStructurePage';
-import { ExercisePage } from './components/exercise/ExercisePage';
 import DailyTaskManager from './components/dailyTask/DailyTaskManager';
 import { TitleTaskManager } from './components/titleTask/TitleTaskManager';
+import QuizManagementPage from './components/quiz/QuizManagementPage';
 
 const AppLayout: React.FC = () => {
   const location = useLocation();
@@ -45,10 +45,10 @@ const AppLayout: React.FC = () => {
               <Route path="/type-grammar" element={<TypeGrammarPage />} />
               <Route path="/type-grammar/:typeId/grammar" element={<GrammarPage />} />
               <Route path="/type-grammar/:typeId/grammar/:grammarId/grammatical-structure" element={<GrammaticalStructurePage />} />
-              <Route path="/type-grammar/:typeId/grammar/:grammarId/grammatical-structure/:grammaticalStructureId/exercises-management" element={<ExercisePage />} />
               <Route path="/sub-topic/:subTopicId" element={<HeaderWithTabs />} />
               <Route path="/daily-task" element={<DailyTaskManager />} />
               <Route path="/title-task" element={<TitleTaskManager />} />
+              <Route path="/manager-quiz" element={<QuizManagementPage />} />
               <Route path="/sub-topic" element={<SubTopicPageManager />} />
             </Routes>
           </div>

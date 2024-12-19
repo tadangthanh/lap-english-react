@@ -28,6 +28,13 @@ const menuItems = [
             { to: "/daily-task", label: "Daily Task" },
             { to: "/title-task", label: "Title Task" }
         ]
+    },
+    {
+        label: "Quizzes",
+        icon: "fa-solid fa-check-double",
+        children: [
+            { to: "/manager-quiz", label: "Manager quiz" },
+        ]
     }
 ];
 

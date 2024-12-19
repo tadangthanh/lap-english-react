@@ -1,8 +1,8 @@
 import Cookies from 'js-cookie';
 import { getRefreshToken, getToken, setRefreshToken, setToken } from './AuthenticationApi';
-import { CustomQuizRequest } from '../modal/CustomQuizRequest';
 import { QuizAnswerRequest } from '../modal/QuizAnswerRequest';
 import { ExerciseRequest } from '../modal/ExerciseRequest';
+import { CustomQuizRequest } from '../modal/CustomQuizRequest';
 
 export const apiUrl = process.env.REACT_APP_API_URL;
 export const apiWsUrl = process.env.REACT_APP_WS_URL;
@@ -28,58 +28,28 @@ export async function get(url: string, retryCount = 0): Promise<any> {
 }
 
 
-export const createExerciseFormData = (exerciseRequest: ExerciseRequest): FormData => {
+export const createQuizFormData = (customQuizRequest: CustomQuizRequest): FormData => {
     const formData = new FormData();
-
-    // Thêm các trường của ExerciseRequest
-    formData.append("grammaticalStructureId", exerciseRequest.grammaticalStructureId.toString());
-
-    // Thêm CustomQuizRequest vào FormData
-    const customQuiz = exerciseRequest.customQuiz;
-
-    formData.append("customQuiz.typeQuiz", customQuiz.typeQuiz.toString());
-    formData.append("customQuiz.question", customQuiz.question);
-    formData.append("customQuiz.exerciseGrammarId", customQuiz.exerciseGrammarId.toString());
-
+    const customQuiz = customQuizRequest;
+    formData.append("typeQuiz", customQuiz.typeQuiz.toString());
+    formData.append("question", customQuiz.question);
     // Thêm file imageQuestion nếu có
     if (customQuiz.imageQuestion) {
-        formData.append("customQuiz.imageQuestion", customQuiz.imageQuestion);
+        formData.append("imageQuestion", customQuiz.imageQuestion);
     }
-
     // Thêm mảng quizAnswers vào FormData
     customQuiz.quizAnswers.forEach((answer: QuizAnswerRequest, index: number) => {
-        formData.append(`customQuiz.quizAnswers[${index}].answer`, answer.answer);
-        formData.append(`customQuiz.quizAnswers[${index}].correct`, answer.correct.toString());
-        formData.append(`customQuiz.quizAnswers[${index}].customQuizId`, answer.customQuizId.toString());
+        formData.append(`quizAnswers[${index}].answer`, answer.answer);
+        formData.append(`quizAnswers[${index}].correct`, answer.correct.toString());
 
         if (answer.imgAnswer) {
-            formData.append(`customQuiz.quizAnswers[${index}].imgAnswer`, answer.imgAnswer);
+            formData.append(`quizAnswers[${index}].imgAnswer`, answer.imgAnswer);
         }
     });
 
     return formData;
 };
 
-// export async function post(url: string, retryCount = 0, body: any): Promise<any> {
-//     const token = getToken();
-//     try {
-//         let response = await await fetch(url, {
-//             headers: {
-//                 'Authorization': `Bearer ${token}`,
-//                 'Content-Type': 'application/json',
-//             },
-//             method: "POST",
-//             body: JSON.stringify(body)
-//         });
-//         if (response.status === 401 && retryCount < 1) {
-//             await refreshTokens();
-//             return post(url, retryCount + 1, body);
-//         }
-//         return await response.json();
-//     } catch (error) {
-//         throw error;
-//     }
-// }
 export async function post(url: string, retryCount = 0, body: any): Promise<any> {
     const token = getToken();
     const headers: Record<string, string> = {

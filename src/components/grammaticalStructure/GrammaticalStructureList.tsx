@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { GrammaticalStructure } from "../../modal/GrammaticalStructure";
 import ConfirmationModal from "../common/ConfirmationModal";
-import { useNavigate } from "react-router-dom";
 
 interface Props {
     structures: GrammaticalStructure[];
@@ -15,7 +14,6 @@ interface Props {
 export const GrammaticalStructureList: React.FC<Props> = ({ structures, setGrammaticalStructureEdit, typeGrammarId, grammarId, grammaticalStructureEdit, onDelete }) => {
     const [grammaticalStructureId, setGrammaticalStructureId] = useState<number>(-1);
     const [showModal, setShowModal] = useState(false);
-    const navigate = useNavigate();
     return (
         <div className="p-4 bg-white shadow rounded-lg">
             <h2 className="text-xl font-bold mb-4">Grammatical Structure List</h2>
@@ -30,12 +28,6 @@ export const GrammaticalStructureList: React.FC<Props> = ({ structures, setGramm
                                 <p className="text-sm text-gray-500">{structure.description}</p>
                             </div>
                             <div>
-                                <button
-                                    className="px-3 me-5 py-2 text-sm text-blue-600 bg-blue-200 rounded hover:bg-blue-300"
-                                    onClick={() => navigate(`/type-grammar/${typeGrammarId}/grammar/${grammarId}/grammatical-structure/${structure.id}/exercises-management`)} // Navigate to Grammar page                        
-                                >
-                                    Management exercises
-                                </button>
                                 {grammaticalStructureEdit?.id === structure.id ? (
                                     <button
                                         className="px-3 py-1 text-sm text-yellow-600 bg-yellow-200 rounded hover:bg-yellow-300"
