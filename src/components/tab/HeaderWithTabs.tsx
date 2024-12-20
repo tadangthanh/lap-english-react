@@ -23,6 +23,11 @@ const HeaderWithTabs: React.FC = () => {
                 if (response.status !== 200) {
                     navigate('/login');
                 }
+                if (response.data.word) {
+                    setActiveTab('1');
+                } else {
+                    setActiveTab('2');
+                }
                 setSubTopic(response.data);
             });
         } else {
@@ -38,7 +43,8 @@ const HeaderWithTabs: React.FC = () => {
 
             {/* Tab điều hướng */}
             <div className="flex border-b border-gray-300 mt-4">
-                <button
+
+                {subTopic?.word ? <button
                     className={`px-4 py-2 text-sm font-medium ${activeTab === '1'
                         ? 'border-b-2 border-blue-500 text-blue-500'
                         : 'text-gray-600 hover:text-blue-500'
@@ -46,8 +52,7 @@ const HeaderWithTabs: React.FC = () => {
                     onClick={() => toggleTab('1')}
                 >
                     Word Manager
-                </button>
-                <button
+                </button> : <button
                     className={`ml-4 px-4 py-2 text-sm font-medium ${activeTab === '2'
                         ? 'border-b-2 border-blue-500 text-blue-500'
                         : 'text-gray-600 hover:text-blue-500'
@@ -55,7 +60,9 @@ const HeaderWithTabs: React.FC = () => {
                     onClick={() => toggleTab('2')}
                 >
                     Sentence Manager
-                </button>
+                </button>}
+
+
             </div>
 
             {/* Nội dung tab */}
