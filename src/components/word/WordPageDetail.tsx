@@ -327,7 +327,7 @@ export const WordPageDetail: React.FC<WordPageDetailProps> = ({ subTopicId }) =>
     }, [lastMessage]); // Lắng nghe thay đổi của lastMessage
     const instructionalText = `
         Ensure your Excel file has the following format: <br />
-        <strong>Columns:</strong> Word, Meaning, PronounceUK, PronounceUS, Type, Level, Example <br />
+        <strong>Columns:</strong> word, meaning, pronounceUK, pronounceUS, type, level, example <br />
         <strong>Type:</strong> One of the following values: NOUN, VERB, ADJECTIVE, ADVERB, PREPOSITION, CONJUNCTION, INTERJECTION, PRONOUN, DETERMINER, EXCLAMATION. <br />
         <strong>Level:</strong> One of the following values: A1, A2, B1, B2, C1, C2.
     `;
