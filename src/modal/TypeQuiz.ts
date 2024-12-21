@@ -3,4 +3,5 @@ export enum TypeQuiz {
     SELECT = "SELECT",
     SOUND = "SOUND",
     WRITE = "WRITE",
+    IMAGE="IMAGE"
 }
